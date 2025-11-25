@@ -11,11 +11,32 @@
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --danger-color: #ef4444;
+}
+
+/* Dark Theme (default) */
+body[data-theme="dark"] {
   --dark-bg: #0f172a;
   --card-bg: #1e293b;
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --border-color: #334155;
+  --bg-gradient-start: #0f172a;
+  --bg-gradient-end: #1e293b;
+  --shadow-color: rgba(59, 130, 246, 0.2);
+  --hover-bg: #334155;
+}
+
+/* Light Theme */
+body[data-theme="light"] {
+  --dark-bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border-color: #e2e8f0;
+  --bg-gradient-start: #f8fafc;
+  --bg-gradient-end: #e0e7ff;
+  --shadow-color: rgba(30, 64, 175, 0.1);
+  --hover-bg: #f1f5f9;
 }
 
 body {
@@ -24,9 +45,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
   color: var(--text-primary);
   min-height: 100vh;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -85,7 +107,7 @@ body {
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 10px 30px var(--shadow-color);
 }
 
 .stat-label {
@@ -354,7 +376,7 @@ body {
 }
 
 .navbar-links a:hover {
-  background: rgba(59, 130, 246, 0.1);
+  background: var(--hover-bg);
   color: var(--accent-color);
 }
 
@@ -365,6 +387,36 @@ body {
 
 .nav-icon {
   font-size: 1.25rem;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  color: var(--text-primary);
+  width: 40px;
+  height: 40px;
+}
+
+.theme-toggle:hover {
+  background: var(--hover-bg);
+  border-color: var(--accent-color);
+  transform: rotate(180deg);
+}
+
+.theme-toggle:active {
+  transform: rotate(180deg) scale(0.9);
+}
+
+.theme-toggle svg {
+  transition: all 0.3s ease;
 }
 
 /* Main content */

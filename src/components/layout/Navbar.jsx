@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useState } from 'react'
+import ThemeToggle from '../ThemeToggle'
 
 function Navbar() {
   const location = useLocation()
@@ -24,16 +25,21 @@ function Navbar() {
         <h1>DST Airlines</h1>
       </Link>
 
-      {/* Burger Button */}
-      <button
-        className={`burger-menu ${isMenuOpen ? 'active' : ''}`}
-        onClick={toggleMenu}
-        aria-label="Menu"
-      >
-        <span className="burger-line"></span>
-        <span className="burger-line"></span>
-        <span className="burger-line"></span>
-      </button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {/* Theme Toggle */}
+        <ThemeToggle />
+
+        {/* Burger Button */}
+        <button
+          className={`burger-menu ${isMenuOpen ? 'active' : ''}`}
+          onClick={toggleMenu}
+          aria-label="Menu"
+        >
+          <span className="burger-line"></span>
+          <span className="burger-line"></span>
+          <span className="burger-line"></span>
+        </button>
+      </div>
 
       {/* Navigation Links */}
       <ul className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
