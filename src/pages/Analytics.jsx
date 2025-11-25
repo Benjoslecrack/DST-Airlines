@@ -100,7 +100,7 @@ function Analytics() {
   return (
     <div className="page-container analytics-page">
       <div className="page-header">
-        <h1>📊 Analytics</h1>
+        <h1>Analytics</h1>
         <p>Analyse détaillée du trafic aérien en temps réel</p>
       </div>
 
