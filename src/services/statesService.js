@@ -23,7 +23,7 @@ export const statesService = {
    * @param {number} limit - Maximum number of results
    * @returns {Promise<Array>} List of active flight states
    */
-  async getAllFlights(limit = 100) {
+  async getAllFlights(limit = 500) {
     return await this.getStates({}, limit, 0);
   },
 

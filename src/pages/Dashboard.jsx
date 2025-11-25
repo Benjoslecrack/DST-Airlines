@@ -14,7 +14,7 @@ function Dashboard() {
       setError(null)
 
       // Fetch flights data from API
-      const states = await statesService.getAllFlights(100)
+      const states = await statesService.getAllFlights(500)
 
       // Filter valid flights
       const validFlights = states
@@ -51,8 +51,8 @@ function Dashboard() {
   useEffect(() => {
     fetchDashboardData()
 
-    // Auto-refresh every 15 seconds
-    const interval = setInterval(fetchDashboardData, 15000)
+    // Auto-refresh every 2 minutes
+    const interval = setInterval(fetchDashboardData, 120000)
 
     return () => clearInterval(interval)
   }, [])

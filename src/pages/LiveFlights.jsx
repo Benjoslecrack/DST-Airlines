@@ -35,7 +35,7 @@ function LiveFlights() {
   const fetchFlights = async () => {
     try {
       setError(null)
-      const states = await statesService.getAllFlights(100)
+      const states = await statesService.getAllFlights(500)
 
       // Filter out flights without valid position data
       const validFlights = states
@@ -55,8 +55,8 @@ function LiveFlights() {
     // Initial load
     fetchFlights()
 
-    // Auto-refresh every 10 seconds for real-time updates
-    const interval = setInterval(fetchFlights, 10000)
+    // Auto-refresh every 2 minutes for real-time updates
+    const interval = setInterval(fetchFlights, 120000)
 
     return () => clearInterval(interval)
   }, [])
