@@ -2554,3 +2554,13 @@ button:active, .filter-btn:active {
     margin-top: 0.5rem;
   }
 }
+
+/* Pagination ellipsis */
+.pagination-ellipsis {
+  color: var(--text-secondary);
+  padding: 0.75rem 0.5rem;
+  font-weight: 500;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
