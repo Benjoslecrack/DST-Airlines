@@ -33,6 +33,12 @@ function Navbar() {
           </Link>
         </li>
         <li>
+          <Link to="/analytics" className={isActive('/analytics')}>
+            <span className="nav-icon">📈</span>
+            Analytics
+          </Link>
+        </li>
+        <li>
           <Link to="/creators" className={isActive('/creators')}>
             <span className="nav-icon">👥</span>
             Créateurs

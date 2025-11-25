@@ -1,3 +1,5 @@
+import AirlineLogo from './AirlineLogo'
+
 function FlightCard({ flight }) {
   const getStatusClass = (status) => {
     const statusMap = {
@@ -24,10 +26,15 @@ function FlightCard({ flight }) {
 
   return (
     <div className="flight-card">
-      <div className="flight-number">
-        <div className="flight-code">{flight.flightNumber}</div>
-        <div className="flight-airline">
-          {flight.airlineName || (isOldFormat ? flight.airline : flight.icao24)}
+      <div className="flight-header">
+        {flight.airlineInfo && (
+          <AirlineLogo airlineInfo={flight.airlineInfo} size="small" />
+        )}
+        <div className="flight-number">
+          <div className="flight-code">{flight.flightNumber}</div>
+          <div className="flight-airline">
+            {flight.airlineName || (isOldFormat ? flight.airline : flight.icao24)}
+          </div>
         </div>
       </div>
 
