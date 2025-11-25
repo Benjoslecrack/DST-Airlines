@@ -27,7 +27,7 @@ function FlightCard({ flight }) {
       <div className="flight-number">
         <div className="flight-code">{flight.flightNumber}</div>
         <div className="flight-airline">
-          {isOldFormat ? flight.airline : flight.icao24}
+          {flight.airlineName || (isOldFormat ? flight.airline : flight.icao24)}
         </div>
       </div>
 
@@ -37,7 +37,7 @@ function FlightCard({ flight }) {
             {isOldFormat ? flight.origin.code : flight.origin}
           </div>
           <div className="location-name">
-            {isOldFormat ? flight.origin.city : 'N/A'}
+            {isOldFormat ? flight.origin.city : (flight.aircraftModel || 'N/A')}
           </div>
         </div>
 

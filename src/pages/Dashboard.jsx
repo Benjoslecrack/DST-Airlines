@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import StatsCard from '../components/StatsCard'
 import FlightCard from '../components/FlightCard'
-import { statesService, countriesService } from '../services'
+import { enrichmentService } from '../services'
 
 function Dashboard() {
   const [flights, setFlights] = useState([])
@@ -13,31 +13,39 @@ function Dashboard() {
     try {
       setError(null)
 
-      // Fetch flights data from API
-      const states = await statesService.getAllFlights(500)
+      // Fetch enriched flights data
+      const enrichedFlights = await enrichmentService.getEnrichedFlights(500)
 
-      // Filter valid flights
-      const validFlights = states
-        .filter(state => state.latitude && state.longitude)
-        .map(state => statesService.transformToFlightFormat(state))
+      setFlights(enrichedFlights)
 
-      setFlights(validFlights)
+      // Calculate statistics from enriched data
+      const inFlightCount = enrichedFlights.filter(f => f.status === 'In Flight').length
+      const onGroundCount = enrichedFlights.filter(f => f.status === 'On Ground').length
 
-      // Calculate statistics from real data
-      const inFlightCount = validFlights.filter(f => f.status === 'In Flight').length
-      const onGroundCount = validFlights.filter(f => f.status === 'On Ground').length
+      // Count unique airlines (enriched data)
+      const uniqueAirlines = new Set(
+        enrichedFlights
+          .filter(f => f.airlineInfo)
+          .map(f => f.airlineInfo.name)
+      ).size
 
-      // Count unique countries (as proxy for airports)
-      const uniqueCountries = new Set(validFlights.map(f => f.origin)).size
+      // Count unique aircraft types
+      const uniqueAircraftTypes = new Set(
+        enrichedFlights
+          .filter(f => f.aircraftInfo)
+          .map(f => `${f.aircraftInfo.manufacturer} ${f.aircraftInfo.model}`)
+      ).size
+
+      // Count unique countries
+      const uniqueCountries = new Set(enrichedFlights.map(f => f.origin)).size
 
       setApiData({
-        totalFlights: validFlights.length,
+        totalFlights: enrichedFlights.length,
         onTime: inFlightCount,
-        delayed: 0, // API doesn't provide delay info
-        cancelled: 0, // API doesn't provide cancelled info
-        avgDelay: 0, // API doesn't provide delay times
+        onGround: onGroundCount,
         airports: uniqueCountries,
-        airlines: uniqueCountries, // Using countries as proxy for airlines
+        airlines: uniqueAirlines || uniqueCountries, // Fallback to countries
+        aircraftTypes: uniqueAircraftTypes,
       })
 
       setLoading(false)
@@ -96,14 +104,30 @@ function Dashboard() {
           color="success"
         />
         <StatsCard
+          label="Au sol"
+          value={apiData?.onGround || 0}
+          color="warning"
+        />
+        <StatsCard
+          label="Compagnies actives"
+          value={apiData?.airlines || 0}
+          color="info"
+        />
+      </div>
+
+      {/* Statistiques secondaires */}
+      <div className="stats-container secondary">
+        <StatsCard
           label="Pays d'origine"
           value={apiData?.airports || 0}
-          color="info"
+        />
+        <StatsCard
+          label="Types d'appareils"
+          value={apiData?.aircraftTypes || 0}
         />
         <StatsCard
           label="Dernière mise à jour"
           value={new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-          color="info"
         />
       </div>
 

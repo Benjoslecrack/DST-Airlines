@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { statesService } from '../services'
+import { enrichmentService } from '../services'
 
 // Fix pour les icônes Leaflet avec Vite
 delete L.Icon.Default.prototype._getIconUrl
@@ -35,14 +35,11 @@ function LiveFlights() {
   const fetchFlights = async () => {
     try {
       setError(null)
-      const states = await statesService.getAllFlights(500)
 
-      // Filter out flights without valid position data
-      const validFlights = states
-        .filter(state => state.latitude && state.longitude)
-        .map(state => statesService.transformToFlightFormat(state))
+      // Fetch enriched flights data (includes airline and aircraft info)
+      const enrichedFlights = await enrichmentService.getEnrichedFlights(500)
 
-      setFlights(validFlights)
+      setFlights(enrichedFlights)
       setLoading(false)
     } catch (err) {
       console.error('Error fetching flights:', err)
@@ -151,6 +148,12 @@ function LiveFlights() {
                 <Popup>
                   <div className="flight-popup">
                     <h3>{flight.flightNumber}</h3>
+                    {flight.airlineInfo && (
+                      <p><strong>Compagnie:</strong> {flight.airlineInfo.name} ({flight.airlineInfo.country})</p>
+                    )}
+                    {flight.aircraftInfo && (
+                      <p><strong>Appareil:</strong> {flight.aircraftInfo.manufacturer} {flight.aircraftInfo.model}</p>
+                    )}
                     <p><strong>ICAO24:</strong> {flight.icao24}</p>
                     <p><strong>Origine:</strong> {flight.origin}</p>
                     <p><strong>Altitude:</strong> {flight.altitude ? `${Math.round(flight.altitude)} m` : 'N/A'}</p>
@@ -180,6 +183,38 @@ function LiveFlights() {
             </button>
           </div>
           <div className="flight-details-content">
+            {selectedFlight.airlineInfo && (
+              <>
+                <div className="detail-row">
+                  <span className="detail-label">Compagnie aérienne:</span>
+                  <span className="detail-value">{selectedFlight.airlineInfo.name}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Code IATA/ICAO:</span>
+                  <span className="detail-value">
+                    {selectedFlight.airlineInfo.iata || 'N/A'} / {selectedFlight.airlineInfo.icao || 'N/A'}
+                  </span>
+                </div>
+              </>
+            )}
+
+            {selectedFlight.aircraftInfo && (
+              <>
+                <div className="detail-row">
+                  <span className="detail-label">Type d'appareil:</span>
+                  <span className="detail-value">
+                    {selectedFlight.aircraftInfo.manufacturer} {selectedFlight.aircraftInfo.model}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Catégorie:</span>
+                  <span className="detail-value">
+                    {selectedFlight.aircraftInfo.type} ({selectedFlight.aircraftInfo.wingType})
+                  </span>
+                </div>
+              </>
+            )}
+
             <div className="detail-row">
               <span className="detail-label">ICAO24:</span>
               <span className="detail-value">{selectedFlight.icao24}</span>
@@ -244,7 +279,8 @@ function LiveFlights() {
             >
               <div className="compact-flight-number">{flight.flightNumber}</div>
               <div className="compact-route">
-                {flight.origin} • {flight.icao24}
+                {flight.airlineName || flight.origin}
+                {flight.aircraftModel && ` • ${flight.aircraftModel}`}
               </div>
               <div className={`compact-status status-${flight.status.toLowerCase().replace(' ', '-')}`}>
                 {flight.status}

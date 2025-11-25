@@ -49,6 +49,58 @@ Tous les services API sont situés dans `/src/services/` :
 - **Endpoint** : `GET /countries/`
 - **Filtres** : name, continent
 
+#### 6. `enrichmentService.js` - ⭐ Enrichissement des données
+- **Fonction** : Croise les données de plusieurs endpoints pour enrichir les informations de vols
+- **Méthode principale** : `getEnrichedFlights(limit)` - Récupère et enrichit les vols
+- **Fonctionnalités** :
+  - **Cache intelligent** : Met en cache les données airlines/aircrafts pendant 5 minutes
+  - **Croisement automatique** : Associe chaque vol à sa compagnie et son type d'avion
+  - **Matching intelligent** :
+    - Compagnies : Par callsign, ICAO code, ou pays d'origine
+    - Avions : Par code ICAO24
+  - **Données enrichies** :
+    - `airlineInfo` : Nom complet, IATA/ICAO, pays, callsign
+    - `aircraftInfo` : Modèle, fabricant, type, wingType
+    - `airlineName` : Nom affiché de la compagnie
+    - `aircraftModel` : Modèle complet (ex: "Boeing 737")
+
+**Exemple de données enrichies** :
+```javascript
+{
+  // Données de base
+  id: 123,
+  icao24: "abc123",
+  flightNumber: "AF1234",
+  latitude: 48.8566,
+  longitude: 2.3522,
+
+  // Enrichissement compagnie
+  airlineInfo: {
+    name: "Air France",
+    iata: "AF",
+    icao: "AFR",
+    country: "France",
+    callsign: "AIRFRANS"
+  },
+  airlineName: "Air France",
+
+  // Enrichissement avion
+  aircraftInfo: {
+    manufacturer: "Airbus",
+    model: "A320",
+    type: "airplane",
+    wingType: "fixed_wing"
+  },
+  aircraftModel: "Airbus A320"
+}
+```
+
+**Avantages** :
+- ✅ Une seule requête pour obtenir des données complètes
+- ✅ Cache pour optimiser les performances
+- ✅ Fallback gracieux si les données ne sont pas trouvées
+- ✅ Pas de requêtes multiples côté client
+
 ## Intégrations
 
 ### Page LiveFlights (`/live-flights`)
@@ -58,59 +110,77 @@ Tous les services API sont situés dans `/src/services/` :
 **Fonctionnalités** :
 - Affiche les vols en temps réel sur une carte Leaflet
 - Utilise les positions GPS réelles de l'API
+- **✨ Données enrichies** : Nom des compagnies et types d'avions affichés
 - Mise à jour automatique toutes les 10 secondes
 - Filtres : Tous / En vol / Au sol
 - Détails complets au clic sur un marqueur
 
 **Code clé** :
 ```javascript
-import { statesService } from '../services'
+import { enrichmentService } from '../services'
 
 const fetchFlights = async () => {
-  const states = await statesService.getAllFlights(100)
-  const validFlights = states
-    .filter(state => state.latitude && state.longitude)
-    .map(state => statesService.transformToFlightFormat(state))
-  setFlights(validFlights)
+  // Récupère les vols avec données enrichies (compagnies + avions)
+  const enrichedFlights = await enrichmentService.getEnrichedFlights(100)
+  setFlights(enrichedFlights)
 }
 ```
 
 **Données affichées** :
 - Position réelle sur la carte
+- **✨ Nom complet de la compagnie aérienne** (ex: "Air France")
+- **✨ Modèle de l'avion** (ex: "Airbus A320")
 - ICAO24, indicatif (callsign)
 - Pays d'origine
 - Altitude, vitesse, cap
 - Taux de montée/descente
 - Statut (en vol / au sol)
+- **✨ Codes IATA/ICAO de la compagnie**
+- **✨ Fabricant et type d'appareil**
 
 ### Page Dashboard (`/`)
 
 **Fichier** : `/src/pages/Dashboard.jsx`
 
 **Fonctionnalités** :
-- Statistiques en temps réel
-- Liste des vols récents
+- Statistiques en temps réel enrichies
+- Liste des vols récents avec noms de compagnies
 - Mise à jour automatique toutes les 15 secondes
+- **✨ Compte précis des compagnies et types d'avions**
 
 **Statistiques affichées** :
 - Total des vols actifs
 - Nombre de vols en vol
+- Nombre de vols au sol
+- **✨ Nombre de compagnies aériennes actives** (données enrichies)
+- **✨ Nombre de types d'appareils différents** (données enrichies)
 - Nombre de pays d'origine différents
 - Heure de dernière mise à jour
 
 **Code clé** :
 ```javascript
-import { statesService } from '../services'
+import { enrichmentService } from '../services'
 
 const fetchDashboardData = async () => {
-  const states = await statesService.getAllFlights(100)
-  const validFlights = states
-    .filter(state => state.latitude && state.longitude)
-    .map(state => statesService.transformToFlightFormat(state))
+  // Récupère les vols enrichis
+  const enrichedFlights = await enrichmentService.getEnrichedFlights(100)
 
-  // Calcul des statistiques
-  const inFlightCount = validFlights.filter(f => f.status === 'In Flight').length
-  const uniqueCountries = new Set(validFlights.map(f => f.origin)).size
+  // Calcul des statistiques enrichies
+  const inFlightCount = enrichedFlights.filter(f => f.status === 'In Flight').length
+
+  // Compte les compagnies uniques grâce à l'enrichissement
+  const uniqueAirlines = new Set(
+    enrichedFlights
+      .filter(f => f.airlineInfo)
+      .map(f => f.airlineInfo.name)
+  ).size
+
+  // Compte les types d'avions uniques
+  const uniqueAircraftTypes = new Set(
+    enrichedFlights
+      .filter(f => f.aircraftInfo)
+      .map(f => `${f.aircraftInfo.manufacturer} ${f.aircraftInfo.model}`)
+  ).size
 }
 ```
 
@@ -161,15 +231,34 @@ L'API `/states/` fournit :
 - ✅ Positions GPS en temps réel
 - ✅ Données de vol (altitude, vitesse, cap)
 - ✅ Statut (en vol / au sol)
+- ✅ **NOUVEAU** : Enrichissement avec `/airlines/` et `/aircrafts/`
 - ❌ Informations sur les aéroports de départ/arrivée
 - ❌ Heures de départ/arrivée prévues
 - ❌ Informations sur les retards
 
+## ✨ Améliorations récentes
+
+### Enrichissement automatique des données (v2.0)
+
+**Problème résolu** : L'API `/states/` ne fournissait pas les noms des compagnies ni les types d'avions.
+
+**Solution implémentée** :
+- Nouveau service `enrichmentService.js` qui croise automatiquement les données
+- Cache intelligent de 5 minutes pour optimiser les performances
+- Matching automatique des compagnies par callsign/ICAO
+- Matching des avions par code ICAO24
+
+**Résultats** :
+- ✅ Noms complets des compagnies aériennes affichés partout
+- ✅ Modèles d'avions affichés (ex: "Airbus A320")
+- ✅ Statistiques précises (nombre de compagnies actives)
+- ✅ Pas d'impact sur les performances (grâce au cache)
+
 ## Prochaines étapes possibles
 
-1. **Enrichissement des données** :
-   - Utiliser `/airlines/` pour obtenir les noms complets des compagnies
-   - Utiliser `/aircrafts/` pour obtenir les détails des avions
+1. ~~**Enrichissement des données**~~ ✅ **FAIT**
+   - ✅ Utiliser `/airlines/` pour obtenir les noms complets des compagnies
+   - ✅ Utiliser `/aircrafts/` pour obtenir les détails des avions
 
 2. **Fonctionnalités avancées** :
    - Recherche de vols par callsign
