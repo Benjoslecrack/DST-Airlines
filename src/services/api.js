@@ -6,7 +6,7 @@ class ApiClient {
     this.baseURL = API_BASE_URL;
     this.headers = {
       'X-API-Key': API_KEY,
-      'Content-Type': 'application/json'
+      'Accept': 'application/json'
     };
   }
 
