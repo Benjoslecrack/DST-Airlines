@@ -6,6 +6,8 @@ function FlightCard({ flight }) {
       'Boarding': 'status-boarding',
       'Departed': 'status-departed',
       'Cancelled': 'status-cancelled',
+      'In Flight': 'status-on-time',
+      'On Ground': 'status-delayed',
     }
     return statusMap[status] || 'status-on-time'
   }
@@ -17,30 +19,47 @@ function FlightCard({ flight }) {
     })
   }
 
+  // Support both old format and new API format
+  const isOldFormat = flight.origin && typeof flight.origin === 'object'
+
   return (
     <div className="flight-card">
       <div className="flight-number">
         <div className="flight-code">{flight.flightNumber}</div>
-        <div className="flight-airline">{flight.airline}</div>
+        <div className="flight-airline">
+          {isOldFormat ? flight.airline : flight.icao24}
+        </div>
       </div>
 
       <div className="flight-route">
         <div className="flight-location">
-          <div className="location-code">{flight.origin.code}</div>
-          <div className="location-name">{flight.origin.city}</div>
+          <div className="location-code">
+            {isOldFormat ? flight.origin.code : flight.origin}
+          </div>
+          <div className="location-name">
+            {isOldFormat ? flight.origin.city : 'N/A'}
+          </div>
         </div>
 
         <div className="flight-arrow">→</div>
 
         <div className="flight-location">
-          <div className="location-code">{flight.destination.code}</div>
-          <div className="location-name">{flight.destination.city}</div>
+          <div className="location-code">
+            {isOldFormat ? flight.destination.code : (flight.destination || 'N/A')}
+          </div>
+          <div className="location-name">
+            {isOldFormat ? flight.destination.city : 'N/A'}
+          </div>
         </div>
       </div>
 
       <div className="flight-info">
         <div className="flight-time">
-          {formatTime(flight.departureTime)}
+          {flight.departureTime
+            ? formatTime(flight.departureTime)
+            : (flight.lastContact
+                ? formatTime(new Date(flight.lastContact * 1000))
+                : 'N/A')}
         </div>
         <div className={`flight-status ${getStatusClass(flight.status)}`}>
           {flight.status}

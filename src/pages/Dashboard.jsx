@@ -1,50 +1,58 @@
 import { useState, useEffect } from 'react'
 import StatsCard from '../components/StatsCard'
 import FlightCard from '../components/FlightCard'
-import { generateFlights, updateFlightStatuses } from '../utils/flightData'
+import { statesService, countriesService } from '../services'
 
 function Dashboard() {
   const [flights, setFlights] = useState([])
   const [loading, setLoading] = useState(true)
   const [apiData, setApiData] = useState(null)
+  const [error, setError] = useState(null)
+
+  const fetchDashboardData = async () => {
+    try {
+      setError(null)
+
+      // Fetch flights data from API
+      const states = await statesService.getAllFlights(100)
+
+      // Filter valid flights
+      const validFlights = states
+        .filter(state => state.latitude && state.longitude)
+        .map(state => statesService.transformToFlightFormat(state))
+
+      setFlights(validFlights)
+
+      // Calculate statistics from real data
+      const inFlightCount = validFlights.filter(f => f.status === 'In Flight').length
+      const onGroundCount = validFlights.filter(f => f.status === 'On Ground').length
+
+      // Count unique countries (as proxy for airports)
+      const uniqueCountries = new Set(validFlights.map(f => f.origin)).size
+
+      setApiData({
+        totalFlights: validFlights.length,
+        onTime: inFlightCount,
+        delayed: 0, // API doesn't provide delay info
+        cancelled: 0, // API doesn't provide cancelled info
+        avgDelay: 0, // API doesn't provide delay times
+        airports: uniqueCountries,
+        airlines: uniqueCountries, // Using countries as proxy for airlines
+      })
+
+      setLoading(false)
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données:', error)
+      setError(error.message)
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    // Simuler un appel API pour récupérer les données du dashboard
-    const fetchDashboardData = async () => {
-      try {
-        // TODO: Remplacer par l'appel réel à votre API
-        // const response = await fetch('YOUR_API_ENDPOINT/dashboard')
-        // const data = await response.json()
-
-        // Simulation de données API
-        setTimeout(() => {
-          const flightData = generateFlights(10)
-          setFlights(flightData)
-
-          setApiData({
-            totalFlights: flightData.length,
-            onTime: flightData.filter(f => f.status === 'On Time').length,
-            delayed: flightData.filter(f => f.status === 'Delayed').length,
-            cancelled: 0,
-            avgDelay: 12, // minutes
-            airports: 15,
-            airlines: 7,
-          })
-
-          setLoading(false)
-        }, 1000)
-      } catch (error) {
-        console.error('Erreur lors de la récupération des données:', error)
-        setLoading(false)
-      }
-    }
-
     fetchDashboardData()
 
-    // Mise à jour périodique des données
-    const interval = setInterval(() => {
-      setFlights(prevFlights => updateFlightStatuses(prevFlights))
-    }, 15000)
+    // Auto-refresh every 15 seconds
+    const interval = setInterval(fetchDashboardData, 15000)
 
     return () => clearInterval(interval)
   }, [])
@@ -53,6 +61,18 @@ function Dashboard() {
     return (
       <div className="page-container">
         <div className="loading">Chargement du tableau de bord...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="page-container">
+        <div className="error-message">
+          <h2>Erreur de connexion à l'API</h2>
+          <p>{error}</p>
+          <button onClick={fetchDashboardData} className="retry-btn">Réessayer</button>
+        </div>
       </div>
     )
   }
@@ -71,36 +91,19 @@ function Dashboard() {
           value={apiData?.totalFlights || 0}
         />
         <StatsCard
-          label="À l'heure"
+          label="En vol"
           value={apiData?.onTime || 0}
           color="success"
         />
         <StatsCard
-          label="Retardés"
-          value={apiData?.delayed || 0}
-          color="warning"
-        />
-        <StatsCard
-          label="Retard moyen"
-          value={`${apiData?.avgDelay || 0} min`}
+          label="Pays d'origine"
+          value={apiData?.airports || 0}
           color="info"
         />
-      </div>
-
-      {/* Statistiques secondaires */}
-      <div className="stats-container secondary">
         <StatsCard
-          label="Aéroports desservis"
-          value={apiData?.airports || 0}
-        />
-        <StatsCard
-          label="Compagnies actives"
-          value={apiData?.airlines || 0}
-        />
-        <StatsCard
-          label="Annulés"
-          value={apiData?.cancelled || 0}
-          color="danger"
+          label="Dernière mise à jour"
+          value={new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+          color="info"
         />
       </div>
 

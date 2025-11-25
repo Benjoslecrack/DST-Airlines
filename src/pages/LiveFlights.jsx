@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { generateFlights, updateFlightStatuses } from '../utils/flightData'
-import { getAirportCoordinates } from '../utils/mapData'
+import { statesService } from '../services'
 
 // Fix pour les icônes Leaflet avec Vite
 delete L.Icon.Default.prototype._getIconUrl
@@ -31,30 +30,57 @@ function LiveFlights() {
   const [loading, setLoading] = useState(true)
   const [selectedFlight, setSelectedFlight] = useState(null)
   const [filter, setFilter] = useState('all')
+  const [error, setError] = useState(null)
+
+  const fetchFlights = async () => {
+    try {
+      setError(null)
+      const states = await statesService.getAllFlights(100)
+
+      // Filter out flights without valid position data
+      const validFlights = states
+        .filter(state => state.latitude && state.longitude)
+        .map(state => statesService.transformToFlightFormat(state))
+
+      setFlights(validFlights)
+      setLoading(false)
+    } catch (err) {
+      console.error('Error fetching flights:', err)
+      setError(err.message)
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    // Charger les vols en direct
-    setTimeout(() => {
-      setFlights(generateFlights(20))
-      setLoading(false)
-    }, 1000)
+    // Initial load
+    fetchFlights()
 
-    // Mise à jour en temps réel
-    const interval = setInterval(() => {
-      setFlights(prevFlights => updateFlightStatuses(prevFlights))
-    }, 8000)
+    // Auto-refresh every 10 seconds for real-time updates
+    const interval = setInterval(fetchFlights, 10000)
 
     return () => clearInterval(interval)
   }, [])
 
   const filteredFlights = filter === 'all'
     ? flights
-    : flights.filter(flight => flight.status.toLowerCase() === filter)
+    : flights.filter(flight => flight.status.toLowerCase() === filter.toLowerCase())
 
   if (loading) {
     return (
       <div className="page-container">
         <div className="loading">Chargement de la carte des vols...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="page-container">
+        <div className="error-message">
+          <h2>Erreur de connexion à l'API</h2>
+          <p>{error}</p>
+          <button onClick={fetchFlights} className="retry-btn">Réessayer</button>
+        </div>
       </div>
     )
   }
@@ -75,34 +101,25 @@ function LiveFlights() {
             Tous ({flights.length})
           </button>
           <button
-            className={`filter-btn ${filter === 'on time' ? 'active' : ''}`}
-            onClick={() => setFilter('on time')}
+            className={`filter-btn ${filter === 'In Flight' ? 'active' : ''}`}
+            onClick={() => setFilter('In Flight')}
           >
-            À l'heure ({flights.filter(f => f.status === 'On Time').length})
+            En vol ({flights.filter(f => f.status === 'In Flight').length})
           </button>
           <button
-            className={`filter-btn ${filter === 'delayed' ? 'active' : ''}`}
-            onClick={() => setFilter('delayed')}
+            className={`filter-btn ${filter === 'On Ground' ? 'active' : ''}`}
+            onClick={() => setFilter('On Ground')}
           >
-            Retardés ({flights.filter(f => f.status === 'Delayed').length})
-          </button>
-          <button
-            className={`filter-btn ${filter === 'boarding' ? 'active' : ''}`}
-            onClick={() => setFilter('boarding')}
-          >
-            Embarquement ({flights.filter(f => f.status === 'Boarding').length})
+            Au sol ({flights.filter(f => f.status === 'On Ground').length})
           </button>
         </div>
 
         <div className="map-legend">
           <span className="legend-item">
-            <span className="legend-dot status-on-time"></span> À l'heure
+            <span className="legend-dot status-on-time"></span> En vol
           </span>
           <span className="legend-item">
-            <span className="legend-dot status-delayed"></span> Retardé
-          </span>
-          <span className="legend-item">
-            <span className="legend-dot status-boarding"></span> Embarquement
+            <span className="legend-dot status-delayed"></span> Au sol
           </span>
         </div>
       </div>
@@ -119,61 +136,32 @@ function LiveFlights() {
           />
 
           {filteredFlights.map(flight => {
-            const originCoords = getAirportCoordinates(flight.origin.code)
-            const destCoords = getAirportCoordinates(flight.destination.code)
-
-            // Position actuelle de l'avion (simulation)
-            const progress = Math.random() * 0.7 + 0.15 // Entre 15% et 85% du trajet
-            const currentPosition = [
-              originCoords[0] + (destCoords[0] - originCoords[0]) * progress,
-              originCoords[1] + (destCoords[1] - originCoords[1]) * progress,
-            ]
-
-            const pathColor = flight.status === 'Delayed' ? '#f59e0b' :
-                             flight.status === 'On Time' ? '#10b981' : '#3b82f6'
+            // Use real position from API
+            const currentPosition = [flight.latitude, flight.longitude]
 
             return (
-              <div key={flight.id}>
-                {/* Trajectoire du vol */}
-                <Polyline
-                  positions={[originCoords, destCoords]}
-                  pathOptions={{
-                    color: pathColor,
-                    weight: 2,
-                    opacity: 0.4,
-                    dashArray: '5, 10'
-                  }}
-                />
-
-                {/* Position actuelle de l'avion */}
-                <Marker
-                  position={currentPosition}
-                  icon={planeIcon}
-                  eventHandlers={{
-                    click: () => setSelectedFlight(flight)
-                  }}
-                >
-                  <Popup>
-                    <div className="flight-popup">
-                      <h3>{flight.flightNumber}</h3>
-                      <p><strong>{flight.airline}</strong></p>
-                      <p>
-                        {flight.origin.code} ({flight.origin.city}) →{' '}
-                        {flight.destination.code} ({flight.destination.city})
-                      </p>
-                      <p>
-                        Départ: {new Date(flight.departureTime).toLocaleTimeString('fr-FR', {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </p>
-                      <p className={`status-${flight.status.toLowerCase().replace(' ', '-')}`}>
-                        Statut: {flight.status}
-                      </p>
-                    </div>
-                  </Popup>
-                </Marker>
-              </div>
+              <Marker
+                key={flight.id}
+                position={currentPosition}
+                icon={planeIcon}
+                eventHandlers={{
+                  click: () => setSelectedFlight(flight)
+                }}
+              >
+                <Popup>
+                  <div className="flight-popup">
+                    <h3>{flight.flightNumber}</h3>
+                    <p><strong>ICAO24:</strong> {flight.icao24}</p>
+                    <p><strong>Origine:</strong> {flight.origin}</p>
+                    <p><strong>Altitude:</strong> {flight.altitude ? `${Math.round(flight.altitude)} m` : 'N/A'}</p>
+                    <p><strong>Vitesse:</strong> {flight.velocity ? `${Math.round(flight.velocity)} m/s` : 'N/A'}</p>
+                    <p><strong>Cap:</strong> {flight.heading ? `${Math.round(flight.heading)}°` : 'N/A'}</p>
+                    <p className={`status-${flight.status.toLowerCase().replace(' ', '-')}`}>
+                      <strong>Statut:</strong> {flight.status}
+                    </p>
+                  </div>
+                </Popup>
+              </Marker>
             )
           })}
         </MapContainer>
@@ -193,25 +181,45 @@ function LiveFlights() {
           </div>
           <div className="flight-details-content">
             <div className="detail-row">
-              <span className="detail-label">Compagnie:</span>
-              <span className="detail-value">{selectedFlight.airline}</span>
+              <span className="detail-label">ICAO24:</span>
+              <span className="detail-value">{selectedFlight.icao24}</span>
             </div>
             <div className="detail-row">
-              <span className="detail-label">Départ:</span>
+              <span className="detail-label">Indicatif:</span>
+              <span className="detail-value">{selectedFlight.callsign || 'N/A'}</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Pays d'origine:</span>
+              <span className="detail-value">{selectedFlight.origin}</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Position:</span>
               <span className="detail-value">
-                {selectedFlight.origin.code} - {selectedFlight.origin.city}
+                {selectedFlight.latitude?.toFixed(4)}°, {selectedFlight.longitude?.toFixed(4)}°
               </span>
             </div>
             <div className="detail-row">
-              <span className="detail-label">Destination:</span>
+              <span className="detail-label">Altitude:</span>
               <span className="detail-value">
-                {selectedFlight.destination.code} - {selectedFlight.destination.city}
+                {selectedFlight.altitude ? `${Math.round(selectedFlight.altitude)} m` : 'N/A'}
               </span>
             </div>
             <div className="detail-row">
-              <span className="detail-label">Heure de départ:</span>
+              <span className="detail-label">Vitesse:</span>
               <span className="detail-value">
-                {new Date(selectedFlight.departureTime).toLocaleString('fr-FR')}
+                {selectedFlight.velocity ? `${Math.round(selectedFlight.velocity)} m/s (~${Math.round(selectedFlight.velocity * 3.6)} km/h)` : 'N/A'}
+              </span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Cap:</span>
+              <span className="detail-value">
+                {selectedFlight.heading ? `${Math.round(selectedFlight.heading)}°` : 'N/A'}
+              </span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Taux vertical:</span>
+              <span className="detail-value">
+                {selectedFlight.verticalRate ? `${selectedFlight.verticalRate > 0 ? '+' : ''}${selectedFlight.verticalRate.toFixed(1)} m/s` : 'N/A'}
               </span>
             </div>
             <div className="detail-row">
@@ -226,7 +234,7 @@ function LiveFlights() {
 
       {/* Liste compacte des vols */}
       <div className="flights-list-compact">
-        <h2>Liste des vols actifs</h2>
+        <h2>Liste des vols actifs ({filteredFlights.length})</h2>
         <div className="flights-compact-grid">
           {filteredFlights.map(flight => (
             <div
@@ -236,7 +244,7 @@ function LiveFlights() {
             >
               <div className="compact-flight-number">{flight.flightNumber}</div>
               <div className="compact-route">
-                {flight.origin.code} → {flight.destination.code}
+                {flight.origin} • {flight.icao24}
               </div>
               <div className={`compact-status status-${flight.status.toLowerCase().replace(' ', '-')}`}>
                 {flight.status}
