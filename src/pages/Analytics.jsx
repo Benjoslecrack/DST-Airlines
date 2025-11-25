@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { enrichmentService } from '../services'
 import AirlineLogo from '../components/AirlineLogo'
 
 function Analytics() {
+  const { t } = useTranslation()
   const [flights, setFlights] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -25,7 +27,7 @@ function Analytics() {
   if (loading) {
     return (
       <div className="page-container">
-        <div className="loading">Chargement des analytics...</div>
+        <div className="loading">{t('analytics.loading')}</div>
       </div>
     )
   }
@@ -34,7 +36,7 @@ function Analytics() {
     return (
       <div className="page-container">
         <div className="error-message">
-          <h2>Erreur</h2>
+          <h2>{t('analytics.error')}</h2>
           <p>{error}</p>
         </div>
       </div>
@@ -100,8 +102,8 @@ function Analytics() {
   return (
     <div className="page-container analytics-page">
       <div className="page-header">
-        <h1>Analytics</h1>
-        <p>Analyse détaillée du trafic aérien en temps réel</p>
+        <h1>{t('analytics.title')}</h1>
+        <p>{t('analytics.subtitle')}</p>
       </div>
 
       {/* Key Metrics Grid */}
@@ -110,7 +112,7 @@ function Analytics() {
           <div className="metric-icon">✈️</div>
           <div className="metric-content">
             <div className="metric-value">{flights.length}</div>
-            <div className="metric-label">Vols total</div>
+            <div className="metric-label">{t('analytics.totalFlights')}</div>
           </div>
         </div>
 
@@ -118,7 +120,7 @@ function Analytics() {
           <div className="metric-icon">🌍</div>
           <div className="metric-content">
             <div className="metric-value">{Object.keys(countryDistribution).length}</div>
-            <div className="metric-label">Pays</div>
+            <div className="metric-label">{t('analytics.countries')}</div>
           </div>
         </div>
 
@@ -126,7 +128,7 @@ function Analytics() {
           <div className="metric-icon">🏢</div>
           <div className="metric-content">
             <div className="metric-value">{Object.keys(airlineDistribution).length}</div>
-            <div className="metric-label">Compagnies</div>
+            <div className="metric-label">{t('analytics.airlines')}</div>
           </div>
         </div>
 
@@ -134,7 +136,7 @@ function Analytics() {
           <div className="metric-icon">🛩️</div>
           <div className="metric-content">
             <div className="metric-value">{Object.keys(aircraftTypeDistribution).length}</div>
-            <div className="metric-label">Types d'avions</div>
+            <div className="metric-label">{t('analytics.aircraftTypes')}</div>
           </div>
         </div>
 
@@ -157,7 +159,7 @@ function Analytics() {
 
       {/* Status Distribution */}
       <div className="analytics-section">
-        <h2>Répartition par statut</h2>
+        <h2>{t('analytics.statusDistribution')}</h2>
         <div className="chart-container">
           <div className="pie-chart-grid">
             {Object.entries(statusDistribution).map(([status, count]) => {
@@ -186,7 +188,7 @@ function Analytics() {
 
       {/* Top Airlines */}
       <div className="analytics-section">
-        <h2>Top 10 Compagnies aériennes</h2>
+        <h2>{t('analytics.topAirlines')}</h2>
         <div className="chart-container">
           <div className="bar-chart">
             {topAirlines.map(([airline, data], index) => {
@@ -214,7 +216,7 @@ function Analytics() {
 
       {/* Top Countries */}
       <div className="analytics-section">
-        <h2>Top 10 Pays d'origine</h2>
+        <h2>{t('analytics.topCountries')}</h2>
         <div className="chart-container">
           <div className="bar-chart">
             {topCountries.map(([country, count], index) => {

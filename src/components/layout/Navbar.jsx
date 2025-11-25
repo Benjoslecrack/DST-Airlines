@@ -1,10 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import ThemeToggle from '../ThemeToggle'
+import LanguageToggle from '../LanguageToggle'
 
 function Navbar() {
   const location = useLocation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { t } = useTranslation()
 
   const isActive = (path) => {
     return location.pathname === path ? 'active' : ''
@@ -26,6 +29,9 @@ function Navbar() {
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {/* Language Toggle */}
+        <LanguageToggle />
+
         {/* Theme Toggle */}
         <ThemeToggle />
 
@@ -46,31 +52,31 @@ function Navbar() {
         <li>
           <Link to="/" className={isActive('/')} onClick={closeMenu}>
             <span className="nav-icon">📊</span>
-            Dashboard
+            {t('nav.dashboard')}
           </Link>
         </li>
         <li>
           <Link to="/prediction" className={isActive('/prediction')} onClick={closeMenu}>
             <span className="nav-icon">🔮</span>
-            Prédiction
+            {t('nav.prediction')}
           </Link>
         </li>
         <li>
           <Link to="/live-flights" className={isActive('/live-flights')} onClick={closeMenu}>
             <span className="nav-icon">🗺️</span>
-            Vols en direct
+            {t('nav.liveFlights')}
           </Link>
         </li>
         <li>
           <Link to="/analytics" className={isActive('/analytics')} onClick={closeMenu}>
             <span className="nav-icon">📈</span>
-            Analytics
+            {t('nav.analytics')}
           </Link>
         </li>
         <li>
           <Link to="/creators" className={isActive('/creators')} onClick={closeMenu}>
             <span className="nav-icon">👥</span>
-            Créateurs
+            {t('nav.creators')}
           </Link>
         </li>
       </ul>

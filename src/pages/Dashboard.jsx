@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import StatsCard from '../components/StatsCard'
 import FlightCard from '../components/FlightCard'
 import { enrichmentService } from '../services'
 
 function Dashboard() {
+  const { t, i18n } = useTranslation()
   const [flights, setFlights] = useState([])
   const [loading, setLoading] = useState(true)
   const [apiData, setApiData] = useState(null)
@@ -132,7 +134,7 @@ function Dashboard() {
   if (loading) {
     return (
       <div className="page-container">
-        <div className="loading">Chargement du tableau de bord...</div>
+        <div className="loading">{t('dashboard.loading')}</div>
       </div>
     )
   }
@@ -141,9 +143,9 @@ function Dashboard() {
     return (
       <div className="page-container">
         <div className="error-message">
-          <h2>Erreur de connexion à l'API</h2>
+          <h2>{t('dashboard.error')}</h2>
           <p>{error}</p>
-          <button onClick={fetchDashboardData} className="retry-btn">Réessayer</button>
+          <button onClick={fetchDashboardData} className="retry-btn">{t('common.retry', 'Réessayer')}</button>
         </div>
       </div>
     )
@@ -152,28 +154,28 @@ function Dashboard() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1>Tableau de bord</h1>
-        <p>Vue d'ensemble des opérations aériennes en temps réel</p>
+        <h1>{t('dashboard.title')}</h1>
+        <p>{t('dashboard.subtitle', 'Vue d\'ensemble des opérations aériennes en temps réel')}</p>
       </div>
 
       {/* Statistiques principales */}
       <div className="stats-container">
         <StatsCard
-          label="Total des vols"
+          label={t('dashboard.totalFlights')}
           value={apiData?.totalFlights || 0}
         />
         <StatsCard
-          label="En vol"
+          label={t('dashboard.inFlight')}
           value={apiData?.onTime || 0}
           color="success"
         />
         <StatsCard
-          label="Au sol"
+          label={t('dashboard.onGround')}
           value={apiData?.onGround || 0}
           color="warning"
         />
         <StatsCard
-          label="Compagnies actives"
+          label={t('dashboard.activeAirlines')}
           value={apiData?.airlines || 0}
           color="info"
         />
@@ -182,39 +184,39 @@ function Dashboard() {
       {/* Statistiques secondaires */}
       <div className="stats-container secondary">
         <StatsCard
-          label="Pays d'origine"
+          label={t('dashboard.country')}
           value={apiData?.airports || 0}
         />
         <StatsCard
-          label="Types d'appareils"
+          label={t('dashboard.aircraftTypes', 'Types d\'appareils')}
           value={apiData?.aircraftTypes || 0}
         />
         <StatsCard
-          label="Dernière mise à jour"
-          value={new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+          label={t('dashboard.lastUpdate', 'Dernière mise à jour')}
+          value={new Date().toLocaleTimeString(i18n.language === 'fr' ? 'fr-FR' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
         />
       </div>
 
       {/* Filtres */}
       <div className="dashboard-filters">
         <div className="filters-header">
-          <h3>🔍 Filtres</h3>
+          <h3>🔍 {t('dashboard.filters', 'Filtres')}</h3>
           {hasActiveFilters && (
             <button className="clear-filters-btn" onClick={clearFilters}>
-              Effacer les filtres
+              {t('dashboard.clearFilters', 'Effacer les filtres')}
             </button>
           )}
         </div>
 
         <div className="filters-grid">
           <div className="filter-group">
-            <label className="filter-label">Recherche</label>
+            <label className="filter-label">{t('dashboard.search')}</label>
             <div className="search-wrapper">
               <span className="search-icon">🔎</span>
               <input
                 type="text"
                 className="search-input"
-                placeholder="Numéro de vol, ICAO24, compagnie..."
+                placeholder={t('dashboard.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -222,13 +224,13 @@ function Dashboard() {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Compagnie</label>
+            <label className="filter-label">{t('dashboard.airline')}</label>
             <select
               className="filter-select"
               value={selectedAirline}
               onChange={(e) => setSelectedAirline(e.target.value)}
             >
-              <option value="">Toutes les compagnies</option>
+              <option value="">{t('dashboard.allAirlines')}</option>
               {uniqueAirlines.map(airline => (
                 <option key={airline} value={airline}>{airline}</option>
               ))}
@@ -236,13 +238,13 @@ function Dashboard() {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Statut</label>
+            <label className="filter-label">{t('dashboard.status')}</label>
             <select
               className="filter-select"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
-              <option value="">Tous les statuts</option>
+              <option value="">{t('dashboard.allStatus')}</option>
               {uniqueStatuses.map(status => (
                 <option key={status} value={status}>{status}</option>
               ))}
@@ -250,13 +252,13 @@ function Dashboard() {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Pays d'origine</label>
+            <label className="filter-label">{t('dashboard.country')}</label>
             <select
               className="filter-select"
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
             >
-              <option value="">Tous les pays</option>
+              <option value="">{t('dashboard.allCountries')}</option>
               {uniqueCountries.map(country => (
                 <option key={country} value={country}>{country}</option>
               ))}
@@ -268,7 +270,7 @@ function Dashboard() {
           <div className="active-filters">
             {searchTerm && (
               <div className="filter-tag">
-                Recherche: "{searchTerm}"
+                {t('dashboard.search')}: "{searchTerm}"
                 <button
                   className="filter-tag-remove"
                   onClick={() => setSearchTerm('')}
@@ -279,7 +281,7 @@ function Dashboard() {
             )}
             {selectedAirline && (
               <div className="filter-tag">
-                Compagnie: {selectedAirline}
+                {t('dashboard.airline')}: {selectedAirline}
                 <button
                   className="filter-tag-remove"
                   onClick={() => setSelectedAirline('')}
@@ -290,7 +292,7 @@ function Dashboard() {
             )}
             {selectedStatus && (
               <div className="filter-tag">
-                Statut: {selectedStatus}
+                {t('dashboard.status')}: {selectedStatus}
                 <button
                   className="filter-tag-remove"
                   onClick={() => setSelectedStatus('')}
@@ -301,7 +303,7 @@ function Dashboard() {
             )}
             {selectedCountry && (
               <div className="filter-tag">
-                Pays: {selectedCountry}
+                {t('dashboard.country')}: {selectedCountry}
                 <button
                   className="filter-tag-remove"
                   onClick={() => setSelectedCountry('')}
@@ -317,7 +319,7 @@ function Dashboard() {
       {/* Liste des vols filtrés */}
       <div className="dashboard-section">
         <h2>
-          Vols {hasActiveFilters && `(${filteredFlights.length}/${flights.length})`}
+          {t('dashboard.flights', 'Vols')} {hasActiveFilters && `(${filteredFlights.length}/${flights.length})`}
         </h2>
         <div className="flights-grid">
           {filteredFlights.length > 0 ? (
@@ -326,9 +328,9 @@ function Dashboard() {
             ))
           ) : (
             <div className="no-results">
-              <p>Aucun vol trouvé avec ces filtres</p>
+              <p>{t('dashboard.noFlights')}</p>
               <button className="clear-filters-btn" onClick={clearFilters}>
-                Effacer les filtres
+                {t('dashboard.clearFilters', 'Effacer les filtres')}
               </button>
             </div>
           )}

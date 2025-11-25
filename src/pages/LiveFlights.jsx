@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -26,6 +27,7 @@ const planeIcon = new L.Icon({
 })
 
 function LiveFlights() {
+  const { t } = useTranslation()
   const [flights, setFlights] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedFlight, setSelectedFlight] = useState(null)
@@ -106,7 +108,7 @@ function LiveFlights() {
   if (loading) {
     return (
       <div className="page-container">
-        <div className="loading">Chargement de la carte des vols...</div>
+        <div className="loading">{t('liveFlights.loading')}</div>
       </div>
     )
   }
@@ -115,9 +117,9 @@ function LiveFlights() {
     return (
       <div className="page-container">
         <div className="error-message">
-          <h2>Erreur de connexion à l'API</h2>
+          <h2>{t('liveFlights.error')}</h2>
           <p>{error}</p>
-          <button onClick={fetchFlights} className="retry-btn">Réessayer</button>
+          <button onClick={fetchFlights} className="retry-btn">{t('common.retry', 'Réessayer')}</button>
         </div>
       </div>
     )
@@ -126,8 +128,8 @@ function LiveFlights() {
   return (
     <div className="page-container live-flights-page">
       <div className="page-header">
-        <h1>Vols en direct</h1>
-        <p>Carte interactive des vols en temps réel</p>
+        <h1>{t('liveFlights.title')}</h1>
+        <p>{t('liveFlights.subtitle', 'Carte interactive des vols en temps réel')}</p>
       </div>
 
       <div className="map-controls">
@@ -136,28 +138,28 @@ function LiveFlights() {
             className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
             onClick={() => setFilter('all')}
           >
-            Tous ({flights.length})
+            {t('liveFlights.all')} ({flights.length})
           </button>
           <button
             className={`filter-btn ${filter === 'In Flight' ? 'active' : ''}`}
             onClick={() => setFilter('In Flight')}
           >
-            En vol ({flights.filter(f => f.status === 'In Flight').length})
+            {t('liveFlights.inFlight')} ({flights.filter(f => f.status === 'In Flight').length})
           </button>
           <button
             className={`filter-btn ${filter === 'On Ground' ? 'active' : ''}`}
             onClick={() => setFilter('On Ground')}
           >
-            Au sol ({flights.filter(f => f.status === 'On Ground').length})
+            {t('liveFlights.onGround')} ({flights.filter(f => f.status === 'On Ground').length})
           </button>
         </div>
 
         <div className="map-legend">
           <span className="legend-item">
-            <span className="legend-dot status-on-time"></span> En vol
+            <span className="legend-dot status-on-time"></span> {t('liveFlights.inFlight')}
           </span>
           <span className="legend-item">
-            <span className="legend-dot status-delayed"></span> Au sol
+            <span className="legend-dot status-delayed"></span> {t('liveFlights.onGround')}
           </span>
         </div>
       </div>
@@ -190,18 +192,18 @@ function LiveFlights() {
                   <div className="flight-popup">
                     <h3>{flight.flightNumber}</h3>
                     {flight.airlineInfo && (
-                      <p><strong>Compagnie:</strong> {flight.airlineInfo.name} ({flight.airlineInfo.country})</p>
+                      <p><strong>{t('liveFlights.airline')}:</strong> {flight.airlineInfo.name} ({flight.airlineInfo.country})</p>
                     )}
                     {flight.aircraftInfo && (
-                      <p><strong>Appareil:</strong> {flight.aircraftInfo.manufacturer} {flight.aircraftInfo.model}</p>
+                      <p><strong>{t('liveFlights.aircraft')}:</strong> {flight.aircraftInfo.manufacturer} {flight.aircraftInfo.model}</p>
                     )}
                     <p><strong>ICAO24:</strong> {flight.icao24}</p>
-                    <p><strong>Origine:</strong> {flight.origin}</p>
-                    <p><strong>Altitude:</strong> {flight.altitude ? `${Math.round(flight.altitude)} m` : 'N/A'}</p>
-                    <p><strong>Vitesse:</strong> {flight.velocity ? `${Math.round(flight.velocity)} m/s` : 'N/A'}</p>
-                    <p><strong>Cap:</strong> {flight.heading ? `${Math.round(flight.heading)}°` : 'N/A'}</p>
+                    <p><strong>{t('liveFlights.origin')}:</strong> {flight.origin}</p>
+                    <p><strong>{t('liveFlights.altitude')}:</strong> {flight.altitude ? `${Math.round(flight.altitude)} m` : 'N/A'}</p>
+                    <p><strong>{t('liveFlights.speed')}:</strong> {flight.velocity ? `${Math.round(flight.velocity)} m/s` : 'N/A'}</p>
+                    <p><strong>{t('liveFlights.heading', 'Cap')}:</strong> {flight.heading ? `${Math.round(flight.heading)}°` : 'N/A'}</p>
                     <p className={`status-${flight.status.toLowerCase().replace(' ', '-')}`}>
-                      <strong>Statut:</strong> {flight.status}
+                      <strong>{t('liveFlights.status')}:</strong> {flight.status}
                     </p>
                   </div>
                 </Popup>
@@ -310,7 +312,7 @@ function LiveFlights() {
 
       {/* Liste compacte des vols avec pagination */}
       <div className="flights-list-compact">
-        <h2>Liste des vols actifs ({filteredFlights.length})</h2>
+        <h2>{t('liveFlights.activeFlightsList', 'Liste des vols actifs')} ({filteredFlights.length})</h2>
 
         {/* Grid des vols */}
         <div className="flights-compact-grid">
@@ -342,7 +344,7 @@ function LiveFlights() {
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
             >
-              ← Précédent
+              ← {t('liveFlights.previous')}
             </button>
 
             <div className="pagination-pages">
@@ -378,7 +380,7 @@ function LiveFlights() {
               }
               disabled={currentPage >= Math.ceil(filteredFlights.length / flightsPerPage)}
             >
-              Suivant →
+              {t('liveFlights.next')} →
             </button>
           </div>
         )}
@@ -386,9 +388,11 @@ function LiveFlights() {
         {/* Info pagination */}
         {filteredFlights.length > flightsPerPage && (
           <div className="pagination-info">
-            Affichage de {(currentPage - 1) * flightsPerPage + 1} à{' '}
-            {Math.min(currentPage * flightsPerPage, filteredFlights.length)} sur{' '}
-            {filteredFlights.length} vols
+            {t('liveFlights.showing', {
+              start: (currentPage - 1) * flightsPerPage + 1,
+              end: Math.min(currentPage * flightsPerPage, filteredFlights.length),
+              total: filteredFlights.length
+            })}
           </div>
         )}
       </div>

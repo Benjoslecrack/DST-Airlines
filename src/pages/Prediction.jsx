@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 function Prediction() {
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     flightNumber: '',
     airline: '',
@@ -78,30 +80,30 @@ function Prediction() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1>Prédiction de retard</h1>
-        <p>Prédisez le retard potentiel d'un vol avec notre modèle d'IA</p>
+        <h1>{t('prediction.title')}</h1>
+        <p>{t('prediction.subtitle')}</p>
       </div>
 
       <div className="prediction-container">
         <div className="prediction-form-section">
-          <h2>Informations du vol</h2>
+          <h2>{t('prediction.flightInfo', 'Informations du vol')}</h2>
           <form onSubmit={handleSubmit} className="prediction-form">
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="flightNumber">Numéro de vol</label>
+                <label htmlFor="flightNumber">{t('prediction.flightNumber')}</label>
                 <input
                   type="text"
                   id="flightNumber"
                   name="flightNumber"
                   value={formData.flightNumber}
                   onChange={handleChange}
-                  placeholder="Ex: AF1234"
+                  placeholder={t('prediction.flightNumberPlaceholder')}
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="airline">Compagnie aérienne</label>
+                <label htmlFor="airline">{t('prediction.airline')}</label>
                 <select
                   id="airline"
                   name="airline"
@@ -109,7 +111,7 @@ function Prediction() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Sélectionnez...</option>
+                  <option value="">{t('prediction.select', 'Sélectionnez...')}</option>
                   <option value="air-france">Air France</option>
                   <option value="emirates">Emirates</option>
                   <option value="lufthansa">Lufthansa</option>
@@ -122,27 +124,27 @@ function Prediction() {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="origin">Aéroport de départ</label>
+                <label htmlFor="origin">{t('prediction.departureAirport')}</label>
                 <input
                   type="text"
                   id="origin"
                   name="origin"
                   value={formData.origin}
                   onChange={handleChange}
-                  placeholder="Ex: CDG (Paris)"
+                  placeholder={t('prediction.departureAirportPlaceholder')}
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="destination">Aéroport d'arrivée</label>
+                <label htmlFor="destination">{t('prediction.arrivalAirport')}</label>
                 <input
                   type="text"
                   id="destination"
                   name="destination"
                   value={formData.destination}
                   onChange={handleChange}
-                  placeholder="Ex: JFK (New York)"
+                  placeholder={t('prediction.arrivalAirportPlaceholder')}
                   required
                 />
               </div>
@@ -150,7 +152,7 @@ function Prediction() {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="departureTime">Heure de départ</label>
+                <label htmlFor="departureTime">{t('prediction.departureTime')}</label>
                 <input
                   type="datetime-local"
                   id="departureTime"
@@ -162,14 +164,14 @@ function Prediction() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="distance">Distance (km)</label>
+                <label htmlFor="distance">{t('prediction.distance', 'Distance (km)')}</label>
                 <input
                   type="number"
                   id="distance"
                   name="distance"
                   value={formData.distance}
                   onChange={handleChange}
-                  placeholder="Ex: 5837"
+                  placeholder={t('prediction.distancePlaceholder', 'Ex: 5837')}
                   required
                 />
               </div>
@@ -177,7 +179,7 @@ function Prediction() {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="weatherConditions">Conditions météo</label>
+                <label htmlFor="weatherConditions">{t('prediction.weather')}</label>
                 <select
                   id="weatherConditions"
                   name="weatherConditions"
@@ -185,17 +187,17 @@ function Prediction() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="clear">Dégagé</option>
-                  <option value="cloudy">Nuageux</option>
-                  <option value="rain">Pluie</option>
-                  <option value="storm">Orage</option>
-                  <option value="snow">Neige</option>
-                  <option value="fog">Brouillard</option>
+                  <option value="clear">{t('prediction.weatherClear')}</option>
+                  <option value="cloudy">{t('prediction.weatherCloudy')}</option>
+                  <option value="rain">{t('prediction.weatherRain')}</option>
+                  <option value="storm">{t('prediction.weatherStorm')}</option>
+                  <option value="snow">{t('prediction.weatherSnow')}</option>
+                  <option value="fog">{t('prediction.weatherFog')}</option>
                 </select>
               </div>
 
               <div className="form-group">
-                <label htmlFor="dayOfWeek">Jour de la semaine</label>
+                <label htmlFor="dayOfWeek">{t('prediction.dayOfWeek')}</label>
                 <select
                   id="dayOfWeek"
                   name="dayOfWeek"
@@ -203,24 +205,24 @@ function Prediction() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Sélectionnez...</option>
-                  <option value="monday">Lundi</option>
-                  <option value="tuesday">Mardi</option>
-                  <option value="wednesday">Mercredi</option>
-                  <option value="thursday">Jeudi</option>
-                  <option value="friday">Vendredi</option>
-                  <option value="saturday">Samedi</option>
-                  <option value="sunday">Dimanche</option>
+                  <option value="">{t('prediction.select', 'Sélectionnez...')}</option>
+                  <option value="monday">{t('prediction.monday')}</option>
+                  <option value="tuesday">{t('prediction.tuesday')}</option>
+                  <option value="wednesday">{t('prediction.wednesday')}</option>
+                  <option value="thursday">{t('prediction.thursday')}</option>
+                  <option value="friday">{t('prediction.friday')}</option>
+                  <option value="saturday">{t('prediction.saturday')}</option>
+                  <option value="sunday">{t('prediction.sunday')}</option>
                 </select>
               </div>
             </div>
 
             <div className="form-actions">
               <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Analyse en cours...' : 'Prédire le retard'}
+                {loading ? t('prediction.analyzing', 'Analyse en cours...') : t('prediction.predict')}
               </button>
               <button type="button" className="btn btn-secondary" onClick={resetForm}>
-                Réinitialiser
+                {t('prediction.reset')}
               </button>
             </div>
           </form>
@@ -228,19 +230,19 @@ function Prediction() {
 
         {prediction && (
           <div className="prediction-results">
-            <h2>Résultats de la prédiction</h2>
+            <h2>{t('prediction.results')}</h2>
 
             <div className="result-card main-result">
               <div className="result-header">
-                <h3>Prédiction</h3>
+                <h3>{t('prediction.predictionTitle', 'Prédiction')}</h3>
                 <span className={`result-badge ${prediction.willBeDelayed ? 'delayed' : 'on-time'}`}>
-                  {prediction.willBeDelayed ? 'Retard probable' : 'À l\'heure'}
+                  {prediction.willBeDelayed ? t('prediction.likelyDelay', 'Retard probable') : t('prediction.onTime', 'À l\'heure')}
                 </span>
               </div>
 
               <div className="result-metrics">
                 <div className="metric">
-                  <span className="metric-label">Probabilité de retard</span>
+                  <span className="metric-label">{t('prediction.delayProbability')}</span>
                   <span className="metric-value">{prediction.delayProbability}%</span>
                   <div className="metric-bar">
                     <div
@@ -251,19 +253,19 @@ function Prediction() {
                 </div>
 
                 <div className="metric">
-                  <span className="metric-label">Retard estimé</span>
-                  <span className="metric-value">{prediction.estimatedDelay} min</span>
+                  <span className="metric-label">{t('prediction.estimatedDelay')}</span>
+                  <span className="metric-value">{prediction.estimatedDelay} {t('prediction.minutes')}</span>
                 </div>
 
                 <div className="metric">
-                  <span className="metric-label">Confiance du modèle</span>
+                  <span className="metric-label">{t('prediction.modelConfidence', 'Confiance du modèle')}</span>
                   <span className="metric-value">{prediction.confidence}%</span>
                 </div>
               </div>
             </div>
 
             <div className="result-card factors-card">
-              <h3>Facteurs d'influence</h3>
+              <h3>{t('prediction.influenceFactors', 'Facteurs d\'influence')}</h3>
               <div className="factors-list">
                 {prediction.factors.map((factor, index) => (
                   <div key={index} className="factor-item">

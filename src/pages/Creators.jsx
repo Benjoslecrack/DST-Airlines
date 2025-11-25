@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 function Creators() {
+  const { t } = useTranslation()
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -46,11 +48,10 @@ function Creators() {
         <div className="creators-header">
           <div className="header-decoration"></div>
           <h1 className="creators-title">
-            <span className="title-word">Notre</span>
-            <span className="title-word">Équipe</span>
+            <span className="title-word">{t('creators.title')}</span>
           </h1>
           <p className="creators-subtitle">
-            Les créateurs passionnés derrière DST Airlines
+            {t('creators.subtitle')}
           </p>
           <div className="header-line"></div>
         </div>
@@ -138,25 +139,22 @@ function Creators() {
         <div className={`project-section ${isVisible ? 'fade-in-up' : ''}`}>
           <div className="project-card">
             <div className="project-icon">✈️</div>
-            <h2 className="project-title">À propos de DST Airlines</h2>
+            <h2 className="project-title">{t('creators.about')}</h2>
             <p className="project-description">
-              DST Airlines est un projet innovant de suivi de vols en temps réel,
-              développé avec passion en utilisant les technologies web les plus modernes.
-              Notre objectif est de fournir une interface intuitive et performante pour
-              la visualisation et l'analyse des données de vol.
+              {t('creators.projectDescription', 'DST Airlines est un projet innovant de suivi de vols en temps réel, développé avec passion en utilisant les technologies web les plus modernes. Notre objectif est de fournir une interface intuitive et performante pour la visualisation et l\'analyse des données de vol.')}
             </p>
             <div className="project-stats">
               <div className="stat-item">
                 <span className="stat-value">2024</span>
-                <span className="stat-label">Année de création</span>
+                <span className="stat-label">{t('creators.yearCreated', 'Année de création')}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-value">Python</span>
-                <span className="stat-label">Stack Principal</span>
+                <span className="stat-label">{t('creators.mainStack', 'Stack Principal')}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-value">100%</span>
-                <span className="stat-label">Passion investie</span>
+                <span className="stat-label">{t('creators.passionInvested', 'Passion investie')}</span>
               </div>
             </div>
           </div>
