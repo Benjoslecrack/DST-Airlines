@@ -9,10 +9,10 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand">
+      <Link to="/" className="navbar-brand" style={{ textDecoration: 'none', cursor: 'pointer' }}>
         <span className="navbar-icon">✈️</span>
         <h1>DST Airlines</h1>
-      </div>
+      </Link>
       <ul className="navbar-links">
         <li>
           <Link to="/" className={isActive('/')}>
@@ -30,6 +30,12 @@ function Navbar() {
           <Link to="/live-flights" className={isActive('/live-flights')}>
             <span className="nav-icon">🗺️</span>
             Vols en direct
+          </Link>
+        </li>
+        <li>
+          <Link to="/creators" className={isActive('/creators')}>
+            <span className="nav-icon">👥</span>
+            Créateurs
           </Link>
         </li>
       </ul>
