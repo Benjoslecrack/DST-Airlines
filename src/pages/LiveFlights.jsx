@@ -32,6 +32,10 @@ function LiveFlights() {
   const [filter, setFilter] = useState('all')
   const [error, setError] = useState(null)
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1)
+  const flightsPerPage = 12
+
   const fetchFlights = async () => {
     try {
       setError(null)
@@ -267,27 +271,83 @@ function LiveFlights() {
         </div>
       )}
 
-      {/* Liste compacte des vols */}
+      {/* Liste compacte des vols avec pagination */}
       <div className="flights-list-compact">
         <h2>Liste des vols actifs ({filteredFlights.length})</h2>
+
+        {/* Grid des vols */}
         <div className="flights-compact-grid">
-          {filteredFlights.map(flight => (
-            <div
-              key={flight.id}
-              className="flight-compact-card"
-              onClick={() => setSelectedFlight(flight)}
-            >
-              <div className="compact-flight-number">{flight.flightNumber}</div>
-              <div className="compact-route">
-                {flight.airlineName || flight.origin}
-                {flight.aircraftModel && ` • ${flight.aircraftModel}`}
+          {filteredFlights
+            .slice((currentPage - 1) * flightsPerPage, currentPage * flightsPerPage)
+            .map(flight => (
+              <div
+                key={flight.id}
+                className="flight-compact-card"
+                onClick={() => setSelectedFlight(flight)}
+              >
+                <div className="compact-flight-number">{flight.flightNumber}</div>
+                <div className="compact-route">
+                  {flight.airlineName || flight.origin}
+                  {flight.aircraftModel && ` • ${flight.aircraftModel}`}
+                </div>
+                <div className={`compact-status status-${flight.status.toLowerCase().replace(' ', '-')}`}>
+                  {flight.status}
+                </div>
               </div>
-              <div className={`compact-status status-${flight.status.toLowerCase().replace(' ', '-')}`}>
-                {flight.status}
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
+
+        {/* Pagination */}
+        {filteredFlights.length > flightsPerPage && (
+          <div className="pagination">
+            <button
+              className="pagination-btn"
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+            >
+              ← Précédent
+            </button>
+
+            <div className="pagination-pages">
+              {Array.from(
+                { length: Math.ceil(filteredFlights.length / flightsPerPage) },
+                (_, i) => i + 1
+              ).map(page => (
+                <button
+                  key={page}
+                  className={`pagination-page ${currentPage === page ? 'active' : ''}`}
+                  onClick={() => setCurrentPage(page)}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            <button
+              className="pagination-btn"
+              onClick={() =>
+                setCurrentPage(
+                  Math.min(
+                    Math.ceil(filteredFlights.length / flightsPerPage),
+                    currentPage + 1
+                  )
+                )
+              }
+              disabled={currentPage >= Math.ceil(filteredFlights.length / flightsPerPage)}
+            >
+              Suivant →
+            </button>
+          </div>
+        )}
+
+        {/* Info pagination */}
+        {filteredFlights.length > flightsPerPage && (
+          <div className="pagination-info">
+            Affichage de {(currentPage - 1) * flightsPerPage + 1} à{' '}
+            {Math.min(currentPage * flightsPerPage, filteredFlights.length)} sur{' '}
+            {filteredFlights.length} vols
+          </div>
+        )}
       </div>
     </div>
   )
