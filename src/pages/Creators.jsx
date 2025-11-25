@@ -15,7 +15,7 @@ function Creators() {
       role: 'Lead Developer & Designer',
       description: 'Passionné par le développement web et l\'innovation technologique. Expert en React et interfaces utilisateur modernes.',
       skills: ['React', 'Node.js', 'UI/UX Design', 'TypeScript'],
-      avatar: '👨‍💻',
+      avatarImage: '/images/creator1.jpg', // Remplacez par le chemin de votre photo
       color: 'from-blue-500 to-cyan-500',
       socialLinks: {
         github: '#',
@@ -29,7 +29,7 @@ function Creators() {
       role: 'Full Stack Developer',
       description: 'Développeur passionné avec une expertise en architecture logicielle et systèmes temps réel. Spécialiste des applications web performantes.',
       skills: ['JavaScript', 'Python', 'Database Design', 'API Development'],
-      avatar: '👩‍💻',
+      avatarImage: '/images/creator2.jpg', // Remplacez par le chemin de votre photo
       color: 'from-purple-500 to-pink-500',
       socialLinks: {
         github: '#',
@@ -69,7 +69,11 @@ function Creators() {
               {/* Avatar */}
               <div className="creator-avatar-container">
                 <div className={`creator-avatar gradient-${creator.color}`}>
-                  <span className="avatar-emoji">{creator.avatar}</span>
+                  <img
+                    src={creator.avatarImage}
+                    alt={creator.name}
+                    className="avatar-image"
+                  />
                   <div className="avatar-ring"></div>
                   <div className="avatar-pulse"></div>
                 </div>
