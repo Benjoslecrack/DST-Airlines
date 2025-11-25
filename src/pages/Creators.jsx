@@ -11,11 +11,11 @@ function Creators() {
   const creators = [
     {
       id: 1,
-      name: 'Créateur 1',
-      role: 'Lead Developer & Designer',
-      description: 'Passionné par le développement web et l\'innovation technologique. Expert en React et interfaces utilisateur modernes.',
-      skills: ['React', 'Node.js', 'UI/UX Design', 'TypeScript'],
-      avatarImage: '/images/creator1.jpg', // Remplacez par le chemin de votre photo
+      name: 'Matthieu KHAIRALLAH',
+      role: 'Lead Dev & Data Engineer',
+      description: 'Passionné ...',
+      skills: ['Python', 'API', 'Database', 'Machine Learning'],
+      avatarImage: 'https://ca.slack-edge.com/T05L3J3NVPV-U06C54HBH4N-adc4ec33afb7-512', // Remplacez par le chemin de votre photo
       color: 'from-blue-500 to-cyan-500',
       socialLinks: {
         github: '#',
@@ -25,11 +25,11 @@ function Creators() {
     },
     {
       id: 2,
-      name: 'Créateur 2',
-      role: 'Full Stack Developer',
-      description: 'Développeur passionné avec une expertise en architecture logicielle et systèmes temps réel. Spécialiste des applications web performantes.',
-      skills: ['JavaScript', 'Python', 'Database Design', 'API Development'],
-      avatarImage: '/images/creator2.jpg', // Remplacez par le chemin de votre photo
+      name: 'Benjamin FONTAINE',
+      role: 'Data Engineer & Frontend Dev',
+      description: 'Développeur ...',
+      skills: ['JavaScript', 'Python', 'Database Design', 'UI/UX'],
+      avatarImage: 'https://ca.slack-edge.com/T05L3J3NVPV-U06CKPVCT8U-a35109dbc6a6-512', // Remplacez par le chemin de votre photo
       color: 'from-purple-500 to-pink-500',
       socialLinks: {
         github: '#',
@@ -151,8 +151,8 @@ function Creators() {
                 <span className="stat-label">Année de création</span>
               </div>
               <div className="stat-item">
-                <span className="stat-value">React</span>
-                <span className="stat-label">Framework principal</span>
+                <span className="stat-value">Python</span>
+                <span className="stat-label">Stack Principal</span>
               </div>
               <div className="stat-item">
                 <span className="stat-value">100%</span>
