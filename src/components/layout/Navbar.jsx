@@ -28,7 +28,7 @@ function Navbar() {
         <h1>DST Airlines</h1>
       </Link>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div className="navbar-actions">
         {/* Language Toggle */}
         <LanguageToggle />
 
