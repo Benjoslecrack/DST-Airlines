@@ -366,13 +366,17 @@ body {
 .navbar-links a {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
   text-decoration: none;
   color: var(--text-secondary);
   border-radius: 8px;
   transition: all 0.2s;
   font-weight: 500;
+  min-width: 140px;
+  white-space: nowrap;
+  text-align: center;
 }
 
 .navbar-links a:hover {
