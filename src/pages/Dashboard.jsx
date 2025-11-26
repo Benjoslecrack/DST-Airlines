@@ -21,30 +21,25 @@ function Dashboard() {
     try {
       setError(null)
 
-      // Fetch enriched flights data
       const enrichedFlights = await enrichmentService.getEnrichedFlights(500)
 
       setFlights(enrichedFlights)
 
-      // Calculate statistics from enriched data
       const inFlightCount = enrichedFlights.filter(f => f.status === 'In Flight').length
       const onGroundCount = enrichedFlights.filter(f => f.status === 'On Ground').length
 
-      // Count unique airlines (enriched data)
       const uniqueAirlines = new Set(
         enrichedFlights
           .filter(f => f.airlineInfo)
           .map(f => f.airlineInfo.name)
       ).size
 
-      // Count unique aircraft types
       const uniqueAircraftTypes = new Set(
         enrichedFlights
           .filter(f => f.aircraftInfo)
           .map(f => `${f.aircraftInfo.manufacturer} ${f.aircraftInfo.model}`)
       ).size
 
-      // Count unique countries
       const uniqueCountries = new Set(enrichedFlights.map(f => f.origin)).size
 
       setApiData({
@@ -67,30 +62,24 @@ function Dashboard() {
   useEffect(() => {
     fetchDashboardData()
 
-    // Auto-refresh every 2 minutes
     const interval = setInterval(fetchDashboardData, 120000)
 
     return () => clearInterval(interval)
   }, [])
 
-  // Get unique airlines for filter dropdown
   const uniqueAirlines = Array.from(
     new Set(flights.filter(f => f.airlineInfo).map(f => f.airlineInfo.name))
   ).sort()
 
-  // Get unique countries for filter dropdown
   const uniqueCountries = Array.from(
     new Set(flights.map(f => f.origin))
   ).sort()
 
-  // Get unique statuses
   const uniqueStatuses = Array.from(
     new Set(flights.map(f => f.status))
   ).sort()
 
-  // Filter flights based on search and filters
   const filteredFlights = flights.filter(flight => {
-    // Search filter
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase()
       const matchesSearch =
@@ -119,8 +108,7 @@ function Dashboard() {
 
     return true
   })
-
-  // Clear all filters
+  
   const clearFilters = () => {
     setSearchTerm('')
     setSelectedAirline('')
@@ -128,7 +116,6 @@ function Dashboard() {
     setSelectedCountry('')
   }
 
-  // Check if any filter is active
   const hasActiveFilters = searchTerm || selectedAirline || selectedStatus || selectedCountry
 
   if (loading) {

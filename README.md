@@ -172,8 +172,8 @@ L'application est **entièrement connectée à l'API DST Airlines** pour affiche
 Créez un fichier `.env` à la racine du projet avec les variables suivantes :
 
 ```env
-VITE_API_BASE_URL=http://94.238.244.170:8000
-VITE_API_KEY=your_api_key_here
+VITE_API_BASE_URL=lien_api_base_url_ici
+VITE_API_KEY=clé_api_ici
 ```
 
 ### Services disponibles
@@ -185,7 +185,7 @@ Croise automatiquement les données de plusieurs endpoints pour fournir des info
 import { enrichmentService } from './services'
 
 // Récupère les vols avec compagnies et appareils enrichis
-const flights = await enrichmentService.getEnrichedFlights(100)
+const flights = await enrichmentService.getEnrichedFlights(500)
 ```
 
 **Données enrichies incluses** :
