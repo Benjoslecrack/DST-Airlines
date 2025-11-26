@@ -1,15 +1,10 @@
 # Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:20 AS builder
 
 WORKDIR /app
 
-# Installer les dépendances de build pour rollup
-RUN apk add --no-cache python3 make g++
-
 COPY package*.json ./
-
-# Installer les dépendances avec npm install (résout le bug avec rollup sur Alpine)
-RUN npm install
+RUN npm ci
 
 COPY . .
 RUN npm run build
