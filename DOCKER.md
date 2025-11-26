@@ -5,6 +5,16 @@
 - Docker installé sur votre machine
 - Variables d'environnement API configurées
 
+## 🔒 Architecture : Proxy Nginx anti-CORS
+
+Cette application utilise **Nginx comme proxy inverse** pour éviter les problèmes CORS :
+
+- Le frontend fait des requêtes vers `/api/*` (même domaine)
+- Nginx redirige automatiquement vers votre API backend
+- L'API Key est injectée par Nginx (sécurisée, non exposée au client)
+
+✅ **Avantages** : Pas de problèmes CORS, API Key sécurisée, performances optimales
+
 ## 🚀 Démarrage rapide
 
 ### 1. Configurer les variables d'environnement
@@ -54,8 +64,15 @@ Ouvrez votre navigateur sur : http://localhost:8080
 
 ### Problème : L'API ne répond pas
 
-Vérifiez que les variables d'environnement sont bien passées au container :
+Vérifiez que le proxy Nginx est bien configuré :
 
+```bash
+docker exec -it <container-id> cat /etc/nginx/nginx.conf | grep -A 10 "location /api"
+```
+
+Vous devriez voir votre URL d'API backend et votre clé API.
+
+Vérifiez aussi env-config.js :
 ```bash
 docker exec -it <container-id> cat /usr/share/nginx/html/env-config.js
 ```
@@ -63,10 +80,12 @@ docker exec -it <container-id> cat /usr/share/nginx/html/env-config.js
 Vous devriez voir :
 ```javascript
 window.ENV = {
-  VITE_API_BASE_URL: "https://api.example.com",
-  VITE_API_KEY: "your-api-key"
+  VITE_API_BASE_URL: "/api",
+  VITE_API_KEY: ""
 };
 ```
+
+Note : L'API Key n'apparaît pas ici car elle est gérée côté serveur par Nginx (plus sécurisé).
 
 ### Problème : Changement de variables
 

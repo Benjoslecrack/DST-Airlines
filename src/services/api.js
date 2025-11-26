@@ -6,9 +6,14 @@ class ApiClient {
   constructor() {
     this.baseURL = API_BASE_URL;
     this.headers = {
-      'X-API-Key': API_KEY,
       'Accept': 'application/json'
     };
+
+    // Ajouter l'API Key seulement si elle est définie (pour dev local)
+    // En production Docker, Nginx ajoute l'API Key via proxy_set_header
+    if (API_KEY && API_KEY.trim() !== '') {
+      this.headers['X-API-Key'] = API_KEY;
+    }
   }
 
   async request(endpoint, options = {}) {
