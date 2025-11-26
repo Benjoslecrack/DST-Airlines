@@ -10,7 +10,8 @@ pipelines:
           - node
         script:
           # Build l'application
-          - npm ci
+          - rm -rf node_modules package-lock.json
+          - npm install
           - npm run build
 
           # Build l'image Docker
