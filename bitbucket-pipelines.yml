@@ -1,0 +1,30 @@
+image: node:20
+
+pipelines:
+  default:
+    - step:
+        name: Build and Deploy to Docker Hub
+        services:
+          - docker
+        caches:
+          - node
+        script:
+          # Build l'application
+          - npm ci
+          - npm run build
+
+          # Build l'image Docker
+          - export IMAGE_NAME=${DOCKER_IMAGE_NAME:-dst-airlines}
+          - export DOCKER_TAG=${BITBUCKET_COMMIT:0:7}
+          - docker build -t $DOCKERHUB_USERNAME/$IMAGE_NAME:$DOCKER_TAG .
+          - docker tag $DOCKERHUB_USERNAME/$IMAGE_NAME:$DOCKER_TAG $DOCKERHUB_USERNAME/$IMAGE_NAME:latest
+
+          # Login et push vers Docker Hub
+          - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          - docker push $DOCKERHUB_USERNAME/$IMAGE_NAME:$DOCKER_TAG
+          - docker push $DOCKERHUB_USERNAME/$IMAGE_NAME:latest
+
+definitions:
+  services:
+    docker:
+      memory: 3072
