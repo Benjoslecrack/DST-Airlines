@@ -101,11 +101,15 @@ function LiveFlights() {
         console.log('Arrival airport:', lastPoint.arr_name)
 
         setAirports({
-          departure: firstPoint.dep_name && firstPoint.latitude != null && firstPoint.longitude != null ? {
+          departure: firstPoint.dep_name &&
+                    firstPoint.latitude != null && firstPoint.longitude != null &&
+                    !isNaN(firstPoint.latitude) && !isNaN(firstPoint.longitude) ? {
             name: firstPoint.dep_name,
             position: [firstPoint.latitude, firstPoint.longitude]
           } : null,
-          arrival: lastPoint.arr_name && lastPoint.latitude != null && lastPoint.longitude != null ? {
+          arrival: lastPoint.arr_name &&
+                  lastPoint.latitude != null && lastPoint.longitude != null &&
+                  !isNaN(lastPoint.latitude) && !isNaN(lastPoint.longitude) ? {
             name: lastPoint.arr_name,
             position: [lastPoint.latitude, lastPoint.longitude]
           } : null
@@ -254,46 +258,50 @@ function LiveFlights() {
           />
 
           {/* Flight markers with rotation */}
-          {filteredFlights.map(flight => {
-            const currentPosition = [flight.latitude, flight.longitude]
-            const rotation = flight.heading || 0
-            const isOnGround = flight.onGround || flight.status === 'On Ground'
+          {filteredFlights
+            .filter(flight => flight.latitude != null && flight.longitude != null &&
+                             !isNaN(flight.latitude) && !isNaN(flight.longitude))
+            .map(flight => {
+              const currentPosition = [flight.latitude, flight.longitude]
+              const rotation = flight.heading || 0
+              const isOnGround = flight.onGround || flight.status === 'On Ground'
 
-            return (
-              <Marker
-                key={flight.id}
-                position={currentPosition}
-                icon={createPlaneIcon(rotation, isOnGround)}
-                eventHandlers={{
-                  click: () => handleFlightClick(flight)
-                }}
-              >
-                <Popup>
-                  <div className="flight-popup">
-                    <h3>{flight.flightNumber}</h3>
-                    {flight.airlineInfo && (
-                      <p><strong>{t('liveFlights.airline')}:</strong> {flight.airlineInfo.name} ({flight.airlineInfo.country})</p>
-                    )}
-                    {flight.aircraftInfo && (
-                      <p><strong>{t('liveFlights.aircraft')}:</strong> {flight.aircraftInfo.manufacturer} {flight.aircraftInfo.model}</p>
-                    )}
-                    <p><strong>ICAO24:</strong> {flight.icao24}</p>
-                    <p><strong>{t('liveFlights.origin')}:</strong> {flight.origin}</p>
-                    <p><strong>{t('liveFlights.altitude')}:</strong> {flight.altitude ? `${Math.round(flight.altitude)} m` : t('common.notAvailable')}</p>
-                    <p><strong>{t('liveFlights.speed')}:</strong> {flight.velocity ? `${Math.round(flight.velocity)} m/s` : t('common.notAvailable')}</p>
-                    <p><strong>{t('liveFlights.heading')}:</strong> {flight.heading ? `${Math.round(flight.heading)}°` : t('common.notAvailable')}</p>
-                    <p className={`status-${flight.status.toLowerCase().replace(' ', '-')}`}>
-                      <strong>{t('liveFlights.status')}:</strong> {flight.status}
-                    </p>
-                  </div>
-                </Popup>
-              </Marker>
-            )
-          })}
+              return (
+                <Marker
+                  key={flight.id}
+                  position={currentPosition}
+                  icon={createPlaneIcon(rotation, isOnGround)}
+                  eventHandlers={{
+                    click: () => handleFlightClick(flight)
+                  }}
+                >
+                  <Popup>
+                    <div className="flight-popup">
+                      <h3>{flight.flightNumber}</h3>
+                      {flight.airlineInfo && (
+                        <p><strong>{t('liveFlights.airline')}:</strong> {flight.airlineInfo.name} ({flight.airlineInfo.country})</p>
+                      )}
+                      {flight.aircraftInfo && (
+                        <p><strong>{t('liveFlights.aircraft')}:</strong> {flight.aircraftInfo.manufacturer} {flight.aircraftInfo.model}</p>
+                      )}
+                      <p><strong>ICAO24:</strong> {flight.icao24}</p>
+                      <p><strong>{t('liveFlights.origin')}:</strong> {flight.origin}</p>
+                      <p><strong>{t('liveFlights.altitude')}:</strong> {flight.altitude ? `${Math.round(flight.altitude)} m` : t('common.notAvailable')}</p>
+                      <p><strong>{t('liveFlights.speed')}:</strong> {flight.velocity ? `${Math.round(flight.velocity)} m/s` : t('common.notAvailable')}</p>
+                      <p><strong>{t('liveFlights.heading')}:</strong> {flight.heading ? `${Math.round(flight.heading)}°` : t('common.notAvailable')}</p>
+                      <p className={`status-${flight.status.toLowerCase().replace(' ', '-')}`}>
+                        <strong>{t('liveFlights.status')}:</strong> {flight.status}
+                      </p>
+                    </div>
+                  </Popup>
+                </Marker>
+              )
+            })}
 
           {/* Airport markers */}
           {airports.departure && airports.departure.position &&
-           airports.departure.position[0] != null && airports.departure.position[1] != null && (
+           airports.departure.position[0] != null && airports.departure.position[1] != null &&
+           !isNaN(airports.departure.position[0]) && !isNaN(airports.departure.position[1]) && (
             <Marker
               position={airports.departure.position}
               icon={airportIcon}
@@ -308,7 +316,8 @@ function LiveFlights() {
           )}
 
           {airports.arrival && airports.arrival.position &&
-           airports.arrival.position[0] != null && airports.arrival.position[1] != null && (
+           airports.arrival.position[0] != null && airports.arrival.position[1] != null &&
+           !isNaN(airports.arrival.position[0]) && !isNaN(airports.arrival.position[1]) && (
             <Marker
               position={airports.arrival.position}
               icon={airportIcon}
@@ -326,7 +335,8 @@ function LiveFlights() {
           {flightTrack.length > 0 && (() => {
             // Filter out points with invalid coordinates
             const validPositions = flightTrack
-              .filter(point => point.latitude != null && point.longitude != null)
+              .filter(point => point && point.latitude != null && point.longitude != null &&
+                              !isNaN(point.latitude) && !isNaN(point.longitude))
               .map(point => [point.latitude, point.longitude])
 
             // Only render Polyline if we have at least 2 valid points
