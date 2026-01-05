@@ -79,16 +79,13 @@ function LiveFlights() {
       const cleanCallsign = callsign?.trim()
 
       if (!cleanCallsign || cleanCallsign.length < 3) {
-        console.warn('Callsign too short or empty:', callsign)
         setFlightTrack([])
         setAirports({ departure: null, arrival: null })
         setLoadingTrack(false)
         return
       }
 
-      console.log('Fetching flight track for callsign:', cleanCallsign)
       const trackData = await statesService.getFlightTrack(cleanCallsign)
-      console.log('Flight track data received:', trackData)
 
       if (trackData && trackData.length > 0) {
         setFlightTrack(trackData)
@@ -96,9 +93,6 @@ function LiveFlights() {
         // Extract airport information from the first and last point
         const firstPoint = trackData[0]
         const lastPoint = trackData[trackData.length - 1]
-
-        console.log('Departure airport:', firstPoint.dep_name)
-        console.log('Arrival airport:', lastPoint.arr_name)
 
         setAirports({
           departure: firstPoint.dep_name &&
@@ -115,7 +109,6 @@ function LiveFlights() {
           } : null
         })
       } else {
-        console.warn('No track data received for callsign:', cleanCallsign)
         setFlightTrack([])
         setAirports({ departure: null, arrival: null })
       }
@@ -130,7 +123,6 @@ function LiveFlights() {
 
   const handleFlightClick = (flight) => {
     setSelectedFlight(flight)
-    console.log('Flight clicked:', flight.flightNumber, 'callsign:', flight.callsign)
 
     // Reset previous track
     setFlightTrack([])
@@ -138,8 +130,6 @@ function LiveFlights() {
 
     if (flight.callsign?.trim()) {
       fetchFlightTrack(flight.callsign.trim())
-    } else {
-      console.warn('No valid callsign for flight:', flight.flightNumber)
     }
   }
 
