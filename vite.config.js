@@ -6,6 +6,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    host: true
+    host: true,
+    proxy: {
+      '/api/predictions': {
+        target: 'http://192.168.1.85:8001',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/predictions/, '/predictions')
+      }
+    }
   }
 })

@@ -78,7 +78,12 @@ export const apiClient = new ApiClient();
  * @returns {Promise} Prediction response with delay probability and classification
  */
 export const predictDelay = async (predictionData) => {
-  const url = `${PREDICTION_API_URL}/predictions/delay`;
+  // En développement, utiliser le proxy Vite pour éviter les problèmes CORS
+  // En production, utiliser l'URL directe configurée dans les variables d'environnement
+  const isDevelopment = import.meta.env.DEV;
+  const url = isDevelopment
+    ? '/api/predictions/delay'  // Passe par le proxy Vite
+    : `${PREDICTION_API_URL}/predictions/delay`; // URL directe en production
 
   const config = {
     method: 'POST',
