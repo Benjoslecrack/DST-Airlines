@@ -1,14 +1,16 @@
 import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 const ThemeToggle = () => {
   const { theme, toggleTheme, isDark } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <button
       onClick={toggleTheme}
       className="theme-toggle"
-      aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-      title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+      aria-label={t('theme.ariaLabel')}
+      title={isDark ? t('theme.switchToLight') : t('theme.switchToDark')}
     >
       {isDark ? (
         <svg

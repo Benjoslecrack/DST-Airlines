@@ -8,6 +8,7 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "subtitle": "Vue d'ensemble des opérations aériennes en temps réel",
     "loading": "Chargement du tableau de bord...",
     "error": "Erreur de connexion à l'API",
     "search": "Recherche",
@@ -33,7 +34,10 @@
     "speed": "Vitesse",
     "unknownAirline": "Compagnie inconnue",
     "unknownAircraft": "Appareil inconnu",
-    "unknownCountry": "Pays inconnu"
+    "unknownCountry": "Pays inconnu",
+    "flights": "Vols",
+    "filters": "Filtres",
+    "clearFilters": "Effacer les filtres"
   },
   "liveFlights": {
     "title": "Vols en direct",
@@ -107,7 +111,11 @@
   "creators": {
     "title": "Notre Équipe",
     "subtitle": "Les créateurs passionnés derrière DST Airlines",
-    "about": "À propos de DST Airlines"
+    "about": "À propos de DST Airlines",
+    "projectDescription": "DST Airlines est un projet innovant de suivi de vols en temps réel, développé avec passion en utilisant les technologies web les plus modernes. Notre objectif est de fournir une interface intuitive et performante pour la visualisation et l'analyse des données de vol.",
+    "yearCreated": "Année de création",
+    "mainStack": "Stack Principal",
+    "passionInvested": "Passion investie"
   },
   "common": {
     "loading": "Chargement...",
@@ -116,7 +124,10 @@
     "close": "Fermer",
     "save": "Enregistrer",
     "cancel": "Annuler",
-    "confirm": "Confirmer"
+    "confirm": "Confirmer",
+    "retry": "Réessayer",
+    "notAvailable": "N/D",
+    "menu": "Menu"
   },
   "colorblind": {
     "normal": "Normal",
@@ -125,5 +136,15 @@
     "tritanopia": "Tritanopie",
     "ariaLabel": "Sélectionner le mode daltonien",
     "title": "Mode daltonien"
+  },
+  "theme": {
+    "switchToLight": "Passer au mode clair",
+    "switchToDark": "Passer au mode sombre",
+    "ariaLabel": "Changer le thème"
+  },
+  "language": {
+    "switchToEnglish": "Switch to English",
+    "switchToFrench": "Passer au français",
+    "ariaLabel": "Changer la langue"
   }
 }

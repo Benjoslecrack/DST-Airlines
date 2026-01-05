@@ -1,6 +1,8 @@
 import AirlineLogo from './AirlineLogo'
+import { useTranslation } from 'react-i18next'
 
 function FlightCard({ flight }) {
+  const { t } = useTranslation()
   const getStatusClass = (status) => {
     const statusMap = {
       'On Time': 'status-on-time',
@@ -44,7 +46,7 @@ function FlightCard({ flight }) {
             {isOldFormat ? flight.origin.code : flight.origin}
           </div>
           <div className="location-name">
-            {isOldFormat ? flight.origin.city : (flight.aircraftModel || 'N/A')}
+            {isOldFormat ? flight.origin.city : (flight.aircraftModel || t('common.notAvailable'))}
           </div>
         </div>
 
@@ -52,10 +54,10 @@ function FlightCard({ flight }) {
 
         <div className="flight-location">
           <div className="location-code">
-            {isOldFormat ? flight.destination.code : (flight.destination || 'N/A')}
+            {isOldFormat ? flight.destination.code : (flight.destination || t('common.notAvailable'))}
           </div>
           <div className="location-name">
-            {isOldFormat ? flight.destination.city : 'N/A'}
+            {isOldFormat ? flight.destination.city : t('common.notAvailable')}
           </div>
         </div>
       </div>
@@ -66,7 +68,7 @@ function FlightCard({ flight }) {
             ? formatTime(flight.departureTime)
             : (flight.lastContact
                 ? formatTime(new Date(flight.lastContact * 1000))
-                : 'N/A')}
+                : t('common.notAvailable'))}
         </div>
         <div className={`flight-status ${getStatusClass(flight.status)}`}>
           {flight.status}

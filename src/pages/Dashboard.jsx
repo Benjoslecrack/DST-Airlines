@@ -143,7 +143,7 @@ function Dashboard() {
         <div className="error-message">
           <h2>{t('dashboard.error')}</h2>
           <p>{error}</p>
-          <button onClick={fetchDashboardData} className="retry-btn">{t('common.retry', 'Réessayer')}</button>
+          <button onClick={fetchDashboardData} className="retry-btn">{t('common.retry')}</button>
         </div>
       </div>
     )
@@ -153,7 +153,7 @@ function Dashboard() {
     <div className="page-container">
       <div className="page-header">
         <h1>{t('dashboard.title')}</h1>
-        <p>{t('dashboard.subtitle', 'Vue d\'ensemble des opérations aériennes en temps réel')}</p>
+        <p>{t('dashboard.subtitle')}</p>
       </div>
 
       {/* Key Metrics Grid */}
@@ -194,7 +194,7 @@ function Dashboard() {
           <div className="metric-icon">📏</div>
           <div className="metric-content">
             <div className="metric-value">{(apiData?.avgAltitude || 0).toLocaleString()} m</div>
-            <div className="metric-label">Altitude moyenne</div>
+            <div className="metric-label">{t('dashboard.averageAltitude')}</div>
           </div>
         </div>
 
@@ -202,7 +202,7 @@ function Dashboard() {
           <div className="metric-icon">⚡</div>
           <div className="metric-content">
             <div className="metric-value">{apiData?.avgVelocity || 0} km/h</div>
-            <div className="metric-label">Vitesse moyenne</div>
+            <div className="metric-label">{t('dashboard.averageSpeed')}</div>
           </div>
         </div>
       </div>
@@ -210,16 +210,16 @@ function Dashboard() {
       {/* Liste des vols filtrés */}
       <div className="dashboard-section">
         <h2>
-          {t('dashboard.flights', 'Vols')} {hasActiveFilters && `(${filteredFlights.length}/${flights.length})`}
+          {t('dashboard.flights')} {hasActiveFilters && `(${filteredFlights.length}/${flights.length})`}
         </h2>
 
         {/* Filtres */}
         <div className="dashboard-filters">
           <div className="filters-header">
-            <h3>🔍 {t('dashboard.filters', 'Filtres')}</h3>
+            <h3>🔍 {t('dashboard.filters')}</h3>
             {hasActiveFilters && (
               <button className="clear-filters-btn" onClick={clearFilters}>
-                {t('dashboard.clearFilters', 'Effacer les filtres')}
+                {t('dashboard.clearFilters')}
               </button>
             )}
           </div>
@@ -341,7 +341,7 @@ function Dashboard() {
             <div className="no-results">
               <p>{t('dashboard.noFlights')}</p>
               <button className="clear-filters-btn" onClick={clearFilters}>
-                {t('dashboard.clearFilters', 'Effacer les filtres')}
+                {t('dashboard.clearFilters')}
               </button>
             </div>
           )}

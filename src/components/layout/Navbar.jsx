@@ -43,7 +43,7 @@ function Navbar() {
         <button
           className={`burger-menu ${isMenuOpen ? 'active' : ''}`}
           onClick={toggleMenu}
-          aria-label="Menu"
+          aria-label={t('common.menu')}
         >
           <span className="burger-line"></span>
           <span className="burger-line"></span>

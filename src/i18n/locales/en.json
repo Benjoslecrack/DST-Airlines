@@ -8,6 +8,7 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "subtitle": "Real-time overview of air operations",
     "loading": "Loading dashboard...",
     "error": "API connection error",
     "search": "Search",
@@ -33,7 +34,10 @@
     "speed": "Speed",
     "unknownAirline": "Unknown airline",
     "unknownAircraft": "Unknown aircraft",
-    "unknownCountry": "Unknown country"
+    "unknownCountry": "Unknown country",
+    "flights": "Flights",
+    "filters": "Filters",
+    "clearFilters": "Clear filters"
   },
   "liveFlights": {
     "title": "Live Flights",
@@ -107,7 +111,11 @@
   "creators": {
     "title": "Our Team",
     "subtitle": "The passionate creators behind DST Airlines",
-    "about": "About DST Airlines"
+    "about": "About DST Airlines",
+    "projectDescription": "DST Airlines is an innovative real-time flight tracking project, developed with passion using the most modern web technologies. Our goal is to provide an intuitive and high-performance interface for visualizing and analyzing flight data.",
+    "yearCreated": "Year created",
+    "mainStack": "Main Stack",
+    "passionInvested": "Passion invested"
   },
   "common": {
     "loading": "Loading...",
@@ -116,7 +124,10 @@
     "close": "Close",
     "save": "Save",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "retry": "Retry",
+    "notAvailable": "N/A",
+    "menu": "Menu"
   },
   "colorblind": {
     "normal": "Normal",
@@ -125,5 +136,15 @@
     "tritanopia": "Tritanopia",
     "ariaLabel": "Select colorblind mode",
     "title": "Colorblind mode"
+  },
+  "theme": {
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode",
+    "ariaLabel": "Change theme"
+  },
+  "language": {
+    "switchToEnglish": "Switch to English",
+    "switchToFrench": "Passer au français",
+    "ariaLabel": "Change language"
   }
 }

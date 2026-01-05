@@ -141,20 +141,20 @@ function Creators() {
             <div className="project-icon">✈️</div>
             <h2 className="project-title">{t('creators.about')}</h2>
             <p className="project-description">
-              {t('creators.projectDescription', 'DST Airlines est un projet innovant de suivi de vols en temps réel, développé avec passion en utilisant les technologies web les plus modernes. Notre objectif est de fournir une interface intuitive et performante pour la visualisation et l\'analyse des données de vol.')}
+              {t('creators.projectDescription')}
             </p>
             <div className="project-stats">
               <div className="stat-item">
                 <span className="stat-value">2024</span>
-                <span className="stat-label">{t('creators.yearCreated', 'Année de création')}</span>
+                <span className="stat-label">{t('creators.yearCreated')}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-value">Python</span>
-                <span className="stat-label">{t('creators.mainStack', 'Stack Principal')}</span>
+                <span className="stat-label">{t('creators.mainStack')}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-value">100%</span>
-                <span className="stat-label">{t('creators.passionInvested', 'Passion investie')}</span>
+                <span className="stat-label">{t('creators.passionInvested')}</span>
               </div>
             </div>
           </div>
