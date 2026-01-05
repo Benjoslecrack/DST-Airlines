@@ -101,11 +101,11 @@ function LiveFlights() {
         console.log('Arrival airport:', lastPoint.arr_name)
 
         setAirports({
-          departure: firstPoint.dep_name ? {
+          departure: firstPoint.dep_name && firstPoint.latitude != null && firstPoint.longitude != null ? {
             name: firstPoint.dep_name,
             position: [firstPoint.latitude, firstPoint.longitude]
           } : null,
-          arrival: lastPoint.arr_name ? {
+          arrival: lastPoint.arr_name && lastPoint.latitude != null && lastPoint.longitude != null ? {
             name: lastPoint.arr_name,
             position: [lastPoint.latitude, lastPoint.longitude]
           } : null
@@ -292,7 +292,8 @@ function LiveFlights() {
           })}
 
           {/* Airport markers */}
-          {airports.departure && (
+          {airports.departure && airports.departure.position &&
+           airports.departure.position[0] != null && airports.departure.position[1] != null && (
             <Marker
               position={airports.departure.position}
               icon={airportIcon}
@@ -306,7 +307,8 @@ function LiveFlights() {
             </Marker>
           )}
 
-          {airports.arrival && (
+          {airports.arrival && airports.arrival.position &&
+           airports.arrival.position[0] != null && airports.arrival.position[1] != null && (
             <Marker
               position={airports.arrival.position}
               icon={airportIcon}
@@ -321,15 +323,23 @@ function LiveFlights() {
           )}
 
           {/* Flight track polyline */}
-          {flightTrack.length > 0 && (
-            <Polyline
-              positions={flightTrack.map(point => [point.latitude, point.longitude])}
-              color="#FF5722"
-              weight={3}
-              opacity={0.7}
-              dashArray="10, 10"
-            />
-          )}
+          {flightTrack.length > 0 && (() => {
+            // Filter out points with invalid coordinates
+            const validPositions = flightTrack
+              .filter(point => point.latitude != null && point.longitude != null)
+              .map(point => [point.latitude, point.longitude])
+
+            // Only render Polyline if we have at least 2 valid points
+            return validPositions.length >= 2 ? (
+              <Polyline
+                positions={validPositions}
+                color="#FF5722"
+                weight={3}
+                opacity={0.7}
+                dashArray="10, 10"
+              />
+            ) : null
+          })()}
         </MapContainer>
       </div>
 
