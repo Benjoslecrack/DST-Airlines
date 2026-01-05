@@ -14,7 +14,7 @@ L.Icon.Default.mergeOptions({
 
 // Function to create a rotated plane icon with color based on flight status
 const createPlaneIcon = (rotation = 0, isOnGround = false) => {
-  const color = isOnGround ? '#666666' : '#2196F3' // Gray for grounded, blue for flying
+  const color = isOnGround ? '#FF9800' : '#4CAF50' // Orange for grounded, green for flying
   return new L.DivIcon({
     html: `
       <div style="transform: rotate(${rotation}deg); width: 32px; height: 32px;">
@@ -49,6 +49,7 @@ function LiveFlights() {
   const [loading, setLoading] = useState(true)
   const [selectedFlight, setSelectedFlight] = useState(null)
   const [flightTrack, setFlightTrack] = useState([])
+  const [loadingTrack, setLoadingTrack] = useState(false)
   const [airports, setAirports] = useState({ departure: null, arrival: null })
   const [filter, setFilter] = useState('all')
   const [error, setError] = useState(null)
@@ -72,8 +73,22 @@ function LiveFlights() {
   }
 
   const fetchFlightTrack = async (callsign) => {
+    setLoadingTrack(true)
     try {
-      const trackData = await statesService.getFlightTrack(callsign)
+      // Clean the callsign (trim whitespace)
+      const cleanCallsign = callsign?.trim()
+
+      if (!cleanCallsign || cleanCallsign.length < 3) {
+        console.warn('Callsign too short or empty:', callsign)
+        setFlightTrack([])
+        setAirports({ departure: null, arrival: null })
+        setLoadingTrack(false)
+        return
+      }
+
+      console.log('Fetching flight track for callsign:', cleanCallsign)
+      const trackData = await statesService.getFlightTrack(cleanCallsign)
+      console.log('Flight track data received:', trackData)
 
       if (trackData && trackData.length > 0) {
         setFlightTrack(trackData)
@@ -81,6 +96,9 @@ function LiveFlights() {
         // Extract airport information from the first and last point
         const firstPoint = trackData[0]
         const lastPoint = trackData[trackData.length - 1]
+
+        console.log('Departure airport:', firstPoint.dep_name)
+        console.log('Arrival airport:', lastPoint.arr_name)
 
         setAirports({
           departure: firstPoint.dep_name ? {
@@ -92,18 +110,32 @@ function LiveFlights() {
             position: [lastPoint.latitude, lastPoint.longitude]
           } : null
         })
+      } else {
+        console.warn('No track data received for callsign:', cleanCallsign)
+        setFlightTrack([])
+        setAirports({ departure: null, arrival: null })
       }
     } catch (err) {
-      console.error('Error fetching flight track:', err)
+      console.error('Error fetching flight track for callsign:', callsign, err)
       setFlightTrack([])
       setAirports({ departure: null, arrival: null })
+    } finally {
+      setLoadingTrack(false)
     }
   }
 
   const handleFlightClick = (flight) => {
     setSelectedFlight(flight)
-    if (flight.callsign) {
-      fetchFlightTrack(flight.callsign)
+    console.log('Flight clicked:', flight.flightNumber, 'callsign:', flight.callsign)
+
+    // Reset previous track
+    setFlightTrack([])
+    setAirports({ departure: null, arrival: null })
+
+    if (flight.callsign?.trim()) {
+      fetchFlightTrack(flight.callsign.trim())
+    } else {
+      console.warn('No valid callsign for flight:', flight.flightNumber)
     }
   }
 
@@ -398,6 +430,35 @@ function LiveFlights() {
                 {selectedFlight.status}
               </span>
             </div>
+
+            {/* Flight track info */}
+            <div className="detail-row" style={{ marginTop: '16px', borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '16px' }}>
+              <span className="detail-label">Trajectoire:</span>
+              <span className="detail-value">
+                {loadingTrack && '🔄 Chargement...'}
+                {!loadingTrack && flightTrack.length > 0 && `✅ ${flightTrack.length} points`}
+                {!loadingTrack && flightTrack.length === 0 && !selectedFlight.callsign && '❌ Pas d\'indicatif'}
+                {!loadingTrack && flightTrack.length === 0 && selectedFlight.callsign && '⚠️ Aucune donnée'}
+              </span>
+            </div>
+
+            {/* Airport info */}
+            {(airports.departure || airports.arrival) && (
+              <>
+                {airports.departure && (
+                  <div className="detail-row">
+                    <span className="detail-label">🛫 Départ:</span>
+                    <span className="detail-value">{airports.departure.name}</span>
+                  </div>
+                )}
+                {airports.arrival && (
+                  <div className="detail-row">
+                    <span className="detail-label">🛬 Arrivée:</span>
+                    <span className="detail-value">{airports.arrival.name}</span>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       )}
