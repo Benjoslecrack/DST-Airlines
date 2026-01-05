@@ -1928,12 +1928,6 @@ body {
 
 .flight-compact-card {
   animation: slideInLeft 0.3s ease-out;
-  transition: all 0.2s ease;
-}
-
-.flight-compact-card:hover {
-  transform: translateX(8px);
-  background: rgba(59, 130, 246, 0.1);
 }
 
 .loading {
