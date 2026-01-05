@@ -1,5 +1,6 @@
 // Support runtime env variables (Docker) et build-time env variables (dev local)
 const API_BASE_URL = window.ENV?.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL;
+const PREDICTION_API_URL = window.ENV?.VITE_PREDICTION_API_URL || import.meta.env.VITE_PREDICTION_API_URL;
 const API_KEY = window.ENV?.VITE_API_KEY || import.meta.env.VITE_API_KEY;
 
 class ApiClient {
@@ -73,9 +74,35 @@ export const apiClient = new ApiClient();
 
 /**
  * Predict flight delay based on flight features
- * @param {Object} predictionData - Flight prediction request with all features
+ * @param {Object} predictionData - Flight prediction request with callsign
  * @returns {Promise} Prediction response with delay probability and classification
  */
 export const predictDelay = async (predictionData) => {
-  return apiClient.post('/predictions/delay', predictionData);
+  const url = `${PREDICTION_API_URL}/predictions/delay`;
+
+  const config = {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(predictionData)
+  };
+
+  try {
+    const response = await fetch(url, config);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.detail ||
+        `API Error: ${response.status} ${response.statusText}`
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Prediction API request failed:`, error);
+    throw error;
+  }
 };
