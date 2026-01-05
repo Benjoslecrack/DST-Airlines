@@ -85,12 +85,19 @@ export const predictDelay = async (predictionData) => {
     ? '/api/predictions/delay'  // Passe par le proxy Vite
     : `${PREDICTION_API_URL}/predictions/delay`; // URL directe en production
 
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  };
+
+  // Ajouter l'API Key si elle est définie
+  if (API_KEY && API_KEY.trim() !== '') {
+    headers['X-API-Key'] = API_KEY;
+  }
+
   const config = {
     method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
+    headers,
     body: JSON.stringify(predictionData)
   };
 
