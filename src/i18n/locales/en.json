@@ -117,5 +117,13 @@
     "save": "Save",
     "cancel": "Cancel",
     "confirm": "Confirm"
+  },
+  "colorblind": {
+    "normal": "Normal",
+    "protanopia": "Protanopia",
+    "deuteranopia": "Deuteranopia",
+    "tritanopia": "Tritanopia",
+    "ariaLabel": "Select colorblind mode",
+    "title": "Colorblind mode"
   }
 }

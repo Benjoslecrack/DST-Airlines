@@ -13,6 +13,36 @@
   --danger-color: #ef4444;
 }
 
+/* Colorblind Mode - Protanopia (Red-Blind) */
+body[data-colorblind="protanopia"] {
+  --primary-color: #1e40af;
+  --secondary-color: #3b82f6;
+  --accent-color: #60a5fa;
+  --success-color: #0891b2; /* Cyan instead of green */
+  --warning-color: #eab308; /* Bright yellow */
+  --danger-color: #ea580c; /* Orange instead of red */
+}
+
+/* Colorblind Mode - Deuteranopia (Green-Blind) */
+body[data-colorblind="deuteranopia"] {
+  --primary-color: #1e40af;
+  --secondary-color: #3b82f6;
+  --accent-color: #60a5fa;
+  --success-color: #0891b2; /* Cyan instead of green */
+  --warning-color: #eab308; /* Bright yellow */
+  --danger-color: #ea580c; /* Orange instead of red */
+}
+
+/* Colorblind Mode - Tritanopia (Blue-Yellow Blind) */
+body[data-colorblind="tritanopia"] {
+  --primary-color: #be185d; /* Pink instead of blue */
+  --secondary-color: #db2777; /* Bright pink */
+  --accent-color: #f472b6; /* Light pink */
+  --success-color: #059669; /* Green (kept, distinguishable) */
+  --warning-color: #dc2626; /* Red instead of orange/yellow */
+  --danger-color: #7c2d12; /* Dark red-brown */
+}
+
 /* Dark Theme (default) */
 body[data-theme="dark"] {
   --dark-bg: #0f172a;

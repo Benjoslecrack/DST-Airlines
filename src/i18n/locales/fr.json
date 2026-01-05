@@ -117,5 +117,13 @@
     "save": "Enregistrer",
     "cancel": "Annuler",
     "confirm": "Confirmer"
+  },
+  "colorblind": {
+    "normal": "Normal",
+    "protanopia": "Protanopie",
+    "deuteranopia": "Deutéranopie",
+    "tritanopia": "Tritanopie",
+    "ariaLabel": "Sélectionner le mode daltonien",
+    "title": "Mode daltonien"
   }
 }

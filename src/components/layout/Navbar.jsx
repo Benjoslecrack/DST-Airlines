@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ThemeToggle from '../ThemeToggle'
 import LanguageToggle from '../LanguageToggle'
+import ColorblindToggle from '../ColorblindToggle'
 
 function Navbar() {
   const location = useLocation()
@@ -31,6 +32,9 @@ function Navbar() {
       <div className="navbar-actions">
         {/* Language Toggle */}
         <LanguageToggle />
+
+        {/* Colorblind Mode Toggle */}
+        <ColorblindToggle />
 
         {/* Theme Toggle */}
         <ThemeToggle />
