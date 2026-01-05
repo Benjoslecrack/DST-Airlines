@@ -68,3 +68,14 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient();
+
+// ==================== PREDICTIONS API ====================
+
+/**
+ * Predict flight delay based on flight features
+ * @param {Object} predictionData - Flight prediction request with all features
+ * @returns {Promise} Prediction response with delay probability and classification
+ */
+export const predictDelay = async (predictionData) => {
+  return apiClient.post('/predictions/delay', predictionData);
+};
