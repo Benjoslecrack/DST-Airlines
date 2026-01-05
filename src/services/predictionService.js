@@ -1,14 +1,15 @@
 // Service pour l'API de prédictions de retard
-// URL de base de l'API de prédictions
-const PREDICTION_API_BASE_URL = 'http://192.168.1.85:8001';
-const PREDICTION_API_KEY = 'fjFonsXHGSE7QcY4UVb1oV78xNhPjyQl7CR5DrNRcty3dtn06z';
+// En développement, utilise le proxy Vite configuré dans vite.config.js
+// En production, l'URL sera gérée par la configuration Docker/Nginx
+const PREDICTION_API_BASE_URL = '/api/predictions';
 
 class PredictionApiClient {
   constructor() {
     this.baseURL = PREDICTION_API_BASE_URL;
     this.headers = {
-      'Accept': 'application/json',
-      'X-API-Key': PREDICTION_API_KEY
+      'Accept': 'application/json'
+      // La clé API est ajoutée automatiquement par le proxy Vite en dev
+      // et par Nginx en production
     };
   }
 
