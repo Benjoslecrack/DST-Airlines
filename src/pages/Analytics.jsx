@@ -144,7 +144,7 @@ function Analytics() {
           <div className="metric-icon">📏</div>
           <div className="metric-content">
             <div className="metric-value">{Math.round(avgAltitude).toLocaleString()} m</div>
-            <div className="metric-label">Altitude moyenne</div>
+            <div className="metric-label">{t('analytics.averageAltitude')}</div>
           </div>
         </div>
 
@@ -152,7 +152,7 @@ function Analytics() {
           <div className="metric-icon">⚡</div>
           <div className="metric-content">
             <div className="metric-value">{Math.round(avgVelocity * 3.6)} km/h</div>
-            <div className="metric-label">Vitesse moyenne</div>
+            <div className="metric-label">{t('analytics.averageSpeed')}</div>
           </div>
         </div>
       </div>
@@ -243,7 +243,7 @@ function Analytics() {
 
       {/* Top Aircraft Types */}
       <div className="analytics-section">
-        <h2>Top 8 Types d'appareils</h2>
+        <h2>{t('analytics.topAircraftTypes')}</h2>
         <div className="chart-container">
           <div className="bar-chart horizontal-compact">
             {topAircraftTypes.map(([type, count], index) => {

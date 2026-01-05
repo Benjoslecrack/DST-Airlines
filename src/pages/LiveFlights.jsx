@@ -197,7 +197,7 @@ function LiveFlights() {
         <div className="error-message">
           <h2>{t('liveFlights.error')}</h2>
           <p>{error}</p>
-          <button onClick={fetchFlights} className="retry-btn">{t('common.retry', 'Réessayer')}</button>
+          <button onClick={fetchFlights} className="retry-btn">{t('common.retry')}</button>
         </div>
       </div>
     )
@@ -207,7 +207,7 @@ function LiveFlights() {
     <div className="page-container live-flights-page">
       <div className="page-header">
         <h1>{t('liveFlights.title')}</h1>
-        <p>{t('liveFlights.subtitle', 'Carte interactive des vols en temps réel')}</p>
+        <p>{t('liveFlights.subtitle')}</p>
       </div>
 
       <div className="map-controls">
@@ -279,9 +279,9 @@ function LiveFlights() {
                     )}
                     <p><strong>ICAO24:</strong> {flight.icao24}</p>
                     <p><strong>{t('liveFlights.origin')}:</strong> {flight.origin}</p>
-                    <p><strong>{t('liveFlights.altitude')}:</strong> {flight.altitude ? `${Math.round(flight.altitude)} m` : 'N/A'}</p>
-                    <p><strong>{t('liveFlights.speed')}:</strong> {flight.velocity ? `${Math.round(flight.velocity)} m/s` : 'N/A'}</p>
-                    <p><strong>{t('liveFlights.heading', 'Cap')}:</strong> {flight.heading ? `${Math.round(flight.heading)}°` : 'N/A'}</p>
+                    <p><strong>{t('liveFlights.altitude')}:</strong> {flight.altitude ? `${Math.round(flight.altitude)} m` : t('common.notAvailable')}</p>
+                    <p><strong>{t('liveFlights.speed')}:</strong> {flight.velocity ? `${Math.round(flight.velocity)} m/s` : t('common.notAvailable')}</p>
+                    <p><strong>{t('liveFlights.heading')}:</strong> {flight.heading ? `${Math.round(flight.heading)}°` : t('common.notAvailable')}</p>
                     <p className={`status-${flight.status.toLowerCase().replace(' ', '-')}`}>
                       <strong>{t('liveFlights.status')}:</strong> {flight.status}
                     </p>
@@ -299,7 +299,7 @@ function LiveFlights() {
             >
               <Popup>
                 <div className="airport-popup">
-                  <h3>🛫 {t('liveFlights.departure', 'Départ')}</h3>
+                  <h3>🛫 {t('liveFlights.departure')}</h3>
                   <p><strong>{airports.departure.name}</strong></p>
                 </div>
               </Popup>
@@ -313,7 +313,7 @@ function LiveFlights() {
             >
               <Popup>
                 <div className="airport-popup">
-                  <h3>🛬 {t('liveFlights.arrival', 'Arrivée')}</h3>
+                  <h3>🛬 {t('liveFlights.arrival')}</h3>
                   <p><strong>{airports.arrival.name}</strong></p>
                 </div>
               </Popup>
@@ -465,7 +465,7 @@ function LiveFlights() {
 
       {/* Liste compacte des vols avec pagination */}
       <div className="flights-list-compact">
-        <h2>{t('liveFlights.activeFlightsList', 'Liste des vols actifs')} ({filteredFlights.length})</h2>
+        <h2>{t('liveFlights.activeFlightsList')} ({filteredFlights.length})</h2>
 
         {/* Grid des vols */}
         <div className="flights-compact-grid">

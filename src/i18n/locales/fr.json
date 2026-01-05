@@ -41,6 +41,7 @@
   },
   "liveFlights": {
     "title": "Vols en direct",
+    "subtitle": "Carte interactive des vols en temps réel",
     "loading": "Chargement de la carte...",
     "error": "Erreur de chargement des vols",
     "all": "Tous",
@@ -55,7 +56,11 @@
     "status": "Statut",
     "previous": "Précédent",
     "next": "Suivant",
-    "showing": "Affichage de {{start}} à {{end}} sur {{total}} vols"
+    "showing": "Affichage de {{start}} à {{end}} sur {{total}} vols",
+    "activeFlightsList": "Liste des vols actifs",
+    "heading": "Cap",
+    "departure": "Départ",
+    "arrival": "Arrivée"
   },
   "prediction": {
     "title": "Prédiction de retard",
@@ -104,6 +109,9 @@
     "statusDistribution": "Répartition par statut",
     "topAirlines": "Top 10 Compagnies aériennes",
     "topCountries": "Top 10 Pays d'origine",
+    "topAircraftTypes": "Top 8 Types d'appareils",
+    "averageAltitude": "Altitude moyenne",
+    "averageSpeed": "Vitesse moyenne",
     "inFlight": "En vol",
     "onGround": "Au sol",
     "flights": "vols"

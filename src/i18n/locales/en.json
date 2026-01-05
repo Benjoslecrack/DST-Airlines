@@ -41,6 +41,7 @@
   },
   "liveFlights": {
     "title": "Live Flights",
+    "subtitle": "Real-time interactive flight map",
     "loading": "Loading map...",
     "error": "Error loading flights",
     "all": "All",
@@ -55,7 +56,11 @@
     "status": "Status",
     "previous": "Previous",
     "next": "Next",
-    "showing": "Showing {{start}} to {{end}} of {{total}} flights"
+    "showing": "Showing {{start}} to {{end}} of {{total}} flights",
+    "activeFlightsList": "Active flights list",
+    "heading": "Heading",
+    "departure": "Departure",
+    "arrival": "Arrival"
   },
   "prediction": {
     "title": "Delay Prediction",
@@ -104,6 +109,9 @@
     "statusDistribution": "Status distribution",
     "topAirlines": "Top 10 Airlines",
     "topCountries": "Top 10 Origin countries",
+    "topAircraftTypes": "Top 8 Aircraft types",
+    "averageAltitude": "Average altitude",
+    "averageSpeed": "Average speed",
     "inFlight": "In flight",
     "onGround": "On ground",
     "flights": "flights"
