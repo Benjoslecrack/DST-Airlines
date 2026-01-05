@@ -12,16 +12,62 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 })
 
-const planeIcon = new L.Icon({
+// Function to create a rotated plane icon based on heading
+const createPlaneIcon = (heading, status) => {
+  const color = status === 'In Flight' ? '#22c55e' : '#f59e0b';
+  const rotation = heading || 0;
+
+  return new L.DivIcon({
+    html: `
+      <div style="transform: rotate(${rotation}deg); width: 32px; height: 32px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+          <path d="M12 2l-1 8-8 1 8 2 2 8 2-8 8-2-8-1z" fill="${color}" stroke="white" stroke-width="1"/>
+        </svg>
+      </div>
+    `,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16],
+    className: 'plane-icon'
+  });
+};
+
+// Airport icon
+const airportIcon = new L.Icon({
   iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
-      <path d="M17.8 11.2 16 7l3.5-3.5c1.5-1.5 2-3.5 1.5-4.5-1-.5-3 0-4.5 1.5L13 4 4.8 2.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 8l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" fill="black" transform="translate(0, 2)"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+      <circle cx="12" cy="12" r="10" fill="#3b82f6" stroke="white" stroke-width="2"/>
+      <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">✈</text>
     </svg>
   `),
-  iconSize: [32, 32],
-  iconAnchor: [16, 16],
-  popupAnchor: [0, -16],
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
+  popupAnchor: [0, -12],
 })
+
+// Major world airports data
+const majorAirports = [
+  { name: "Paris Charles de Gaulle", iata: "CDG", lat: 49.0097, lon: 2.5479, country: "France" },
+  { name: "London Heathrow", iata: "LHR", lat: 51.4700, lon: -0.4543, country: "United Kingdom" },
+  { name: "Frankfurt Airport", iata: "FRA", lat: 50.0379, lon: 8.5622, country: "Germany" },
+  { name: "Amsterdam Schiphol", iata: "AMS", lat: 52.3105, lon: 4.7683, country: "Netherlands" },
+  { name: "Madrid Barajas", iata: "MAD", lat: 40.4839, lon: -3.5680, country: "Spain" },
+  { name: "Rome Fiumicino", iata: "FCO", lat: 41.8003, lon: 12.2389, country: "Italy" },
+  { name: "New York JFK", iata: "JFK", lat: 40.6413, lon: -73.7781, country: "United States" },
+  { name: "Los Angeles LAX", iata: "LAX", lat: 33.9416, lon: -118.4085, country: "United States" },
+  { name: "Tokyo Haneda", iata: "HND", lat: 35.5494, lon: 139.7798, country: "Japan" },
+  { name: "Dubai International", iata: "DXB", lat: 25.2532, lon: 55.3657, country: "United Arab Emirates" },
+  { name: "Singapore Changi", iata: "SIN", lat: 1.3644, lon: 103.9915, country: "Singapore" },
+  { name: "Hong Kong Int'l", iata: "HKG", lat: 22.3080, lon: 113.9185, country: "Hong Kong" },
+  { name: "Sydney Kingsford", iata: "SYD", lat: -33.9399, lon: 151.1753, country: "Australia" },
+  { name: "Toronto Pearson", iata: "YYZ", lat: 43.6777, lon: -79.6248, country: "Canada" },
+  { name: "São Paulo GRU", iata: "GRU", lat: -23.4356, lon: -46.4731, country: "Brazil" },
+  { name: "Istanbul Airport", iata: "IST", lat: 41.2753, lon: 28.7519, country: "Turkey" },
+  { name: "Beijing Capital", iata: "PEK", lat: 40.0799, lon: 116.6031, country: "China" },
+  { name: "Shanghai Pudong", iata: "PVG", lat: 31.1443, lon: 121.8083, country: "China" },
+  { name: "Mumbai Int'l", iata: "BOM", lat: 19.0897, lon: 72.8681, country: "India" },
+  { name: "Seoul Incheon", iata: "ICN", lat: 37.4602, lon: 126.4407, country: "South Korea" },
+]
 
 function LiveFlights() {
   const { t } = useTranslation()
@@ -30,6 +76,7 @@ function LiveFlights() {
   const [selectedFlight, setSelectedFlight] = useState(null)
   const [filter, setFilter] = useState('all')
   const [error, setError] = useState(null)
+  const [showAirports, setShowAirports] = useState(true)
 
   const [currentPage, setCurrentPage] = useState(1)
   const flightsPerPage = 12
@@ -140,6 +187,12 @@ function LiveFlights() {
           >
             {t('liveFlights.onGround')} ({flights.filter(f => f.status === 'On Ground').length})
           </button>
+          <button
+            className={`filter-btn ${showAirports ? 'active' : ''}`}
+            onClick={() => setShowAirports(!showAirports)}
+          >
+            🛬 {showAirports ? t('liveFlights.hideAirports', 'Masquer aéroports') : t('liveFlights.showAirports', 'Afficher aéroports')}
+          </button>
         </div>
 
         <div className="map-legend">
@@ -149,6 +202,11 @@ function LiveFlights() {
           <span className="legend-item">
             <span className="legend-dot status-delayed"></span> {t('liveFlights.onGround')}
           </span>
+          {showAirports && (
+            <span className="legend-item">
+              <span className="legend-dot" style={{ backgroundColor: '#3b82f6' }}></span> Aéroports
+            </span>
+          )}
         </div>
       </div>
 
@@ -163,9 +221,10 @@ function LiveFlights() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
+          {/* Flight markers with directional icons */}
           {filteredFlights.map(flight => {
-            // Use real position from API
             const currentPosition = [flight.latitude, flight.longitude]
+            const planeIcon = createPlaneIcon(flight.heading, flight.status)
 
             return (
               <Marker
@@ -198,6 +257,24 @@ function LiveFlights() {
               </Marker>
             )
           })}
+
+          {/* Airport markers */}
+          {showAirports && majorAirports.map(airport => (
+            <Marker
+              key={airport.iata}
+              position={[airport.lat, airport.lon]}
+              icon={airportIcon}
+            >
+              <Popup>
+                <div className="airport-popup">
+                  <h3>🛬 {airport.name}</h3>
+                  <p><strong>Code IATA:</strong> {airport.iata}</p>
+                  <p><strong>Pays:</strong> {airport.country}</p>
+                  <p><strong>Position:</strong> {airport.lat.toFixed(4)}°, {airport.lon.toFixed(4)}°</p>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
         </MapContainer>
       </div>
 

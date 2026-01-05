@@ -2670,3 +2670,54 @@ button:active, .filter-btn:active {
   display: flex;
   align-items: center;
 }
+
+/* Plane Icon Styles */
+.plane-icon {
+  background: transparent !important;
+  border: none !important;
+  transition: transform 0.3s ease;
+}
+
+.plane-icon:hover {
+  transform: scale(1.2);
+  z-index: 1000 !important;
+}
+
+/* Airport and Flight Popup Styles */
+.airport-popup {
+  font-family: inherit;
+}
+
+.airport-popup h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: var(--primary-color);
+}
+
+.airport-popup p {
+  margin: 0.25rem 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.flight-popup {
+  min-width: 200px;
+}
+
+.flight-popup h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.25rem;
+}
+
+.flight-popup p {
+  margin: 0.25rem 0;
+  font-size: 0.875rem;
+}
+
+.flight-popup strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
