@@ -42,6 +42,15 @@ function Dashboard() {
 
       const uniqueCountries = new Set(enrichedFlights.map(f => f.origin)).size
 
+      // Calculate average metrics
+      const avgAltitude = enrichedFlights
+        .filter(f => f.altitude)
+        .reduce((sum, f) => sum + f.altitude, 0) / enrichedFlights.filter(f => f.altitude).length
+
+      const avgVelocity = enrichedFlights
+        .filter(f => f.velocity)
+        .reduce((sum, f) => sum + f.velocity, 0) / enrichedFlights.filter(f => f.velocity).length
+
       setApiData({
         totalFlights: enrichedFlights.length,
         onTime: inFlightCount,
@@ -49,6 +58,8 @@ function Dashboard() {
         airports: uniqueCountries,
         airlines: uniqueAirlines || uniqueCountries, // Fallback to countries
         aircraftTypes: uniqueAircraftTypes,
+        avgAltitude: Math.round(avgAltitude) || 0,
+        avgVelocity: Math.round(avgVelocity * 3.6) || 0, // Convert m/s to km/h
       })
 
       setLoading(false)
@@ -145,43 +156,55 @@ function Dashboard() {
         <p>{t('dashboard.subtitle', 'Vue d\'ensemble des opérations aériennes en temps réel')}</p>
       </div>
 
-      {/* Statistiques principales */}
-      <div className="stats-container">
-        <StatsCard
-          label={t('dashboard.totalFlights')}
-          value={apiData?.totalFlights || 0}
-        />
-        <StatsCard
-          label={t('dashboard.inFlight')}
-          value={apiData?.onTime || 0}
-          color="success"
-        />
-        <StatsCard
-          label={t('dashboard.onGround')}
-          value={apiData?.onGround || 0}
-          color="warning"
-        />
-        <StatsCard
-          label={t('dashboard.activeAirlines')}
-          value={apiData?.airlines || 0}
-          color="info"
-        />
-      </div>
+      {/* Key Metrics Grid */}
+      <div className="analytics-metrics">
+        <div className="metric-card">
+          <div className="metric-icon">✈️</div>
+          <div className="metric-content">
+            <div className="metric-value">{apiData?.totalFlights || 0}</div>
+            <div className="metric-label">{t('analytics.totalFlights')}</div>
+          </div>
+        </div>
 
-      {/* Statistiques secondaires */}
-      <div className="stats-container secondary">
-        <StatsCard
-          label={t('dashboard.country')}
-          value={apiData?.airports || 0}
-        />
-        <StatsCard
-          label={t('dashboard.aircraftTypes', 'Types d\'appareils')}
-          value={apiData?.aircraftTypes || 0}
-        />
-        <StatsCard
-          label={t('dashboard.lastUpdate', 'Dernière mise à jour')}
-          value={new Date().toLocaleTimeString(i18n.language === 'fr' ? 'fr-FR' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
-        />
+        <div className="metric-card">
+          <div className="metric-icon">🌍</div>
+          <div className="metric-content">
+            <div className="metric-value">{apiData?.airports || 0}</div>
+            <div className="metric-label">{t('analytics.countries')}</div>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div className="metric-icon">🏢</div>
+          <div className="metric-content">
+            <div className="metric-value">{apiData?.airlines || 0}</div>
+            <div className="metric-label">{t('analytics.airlines')}</div>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div className="metric-icon">🛩️</div>
+          <div className="metric-content">
+            <div className="metric-value">{apiData?.aircraftTypes || 0}</div>
+            <div className="metric-label">{t('analytics.aircraftTypes')}</div>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div className="metric-icon">📏</div>
+          <div className="metric-content">
+            <div className="metric-value">{(apiData?.avgAltitude || 0).toLocaleString()} m</div>
+            <div className="metric-label">Altitude moyenne</div>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div className="metric-icon">⚡</div>
+          <div className="metric-content">
+            <div className="metric-value">{apiData?.avgVelocity || 0} km/h</div>
+            <div className="metric-label">Vitesse moyenne</div>
+          </div>
+        </div>
       </div>
 
       {/* Filtres */}
