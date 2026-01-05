@@ -28,90 +28,9 @@ function Prediction() {
 
   // Mapper les données du formulaire vers le format de l'API
   const mapFormDataToApiRequest = (formData) => {
-    const departureDate = new Date(formData.departureTime)
-    const dayOfWeek = departureDate.getDay() // 0=Sunday, 1=Monday, etc.
-    const hour = departureDate.getHours()
-    const month = departureDate.getMonth() + 1 // 0-11 -> 1-12
-
-    // Mapping des conditions météo vers des valeurs numériques
-    const weatherMapping = {
-      'clear': { cloudCover: 10, precipitation: 0, visibility: 10000, adverseWeather: false, temperature: 20 },
-      'cloudy': { cloudCover: 70, precipitation: 0, visibility: 8000, adverseWeather: false, temperature: 18 },
-      'rain': { cloudCover: 90, precipitation: 5, visibility: 5000, adverseWeather: true, temperature: 15 },
-      'storm': { cloudCover: 100, precipitation: 15, visibility: 2000, adverseWeather: true, temperature: 16 },
-      'snow': { cloudCover: 100, precipitation: 10, visibility: 3000, adverseWeather: true, temperature: -2 },
-      'fog': { cloudCover: 80, precipitation: 0, visibility: 1000, adverseWeather: true, temperature: 12 },
-    }
-
-    const weather = weatherMapping[formData.weatherConditions] || weatherMapping['clear']
-
-    // Extraire le code IATA de la compagnie depuis le formulaire
-    const airlineMapping = {
-      'air-france': 'AF',
-      'emirates': 'EK',
-      'lufthansa': 'LH',
-      'british-airways': 'BA',
-      'qatar-airways': 'QR',
-      'singapore-airlines': 'SQ',
-    }
-
-    const operatorIata = airlineMapping[formData.airline] || 'AF'
-
+    // L'API nécessite uniquement le callsign (flight_iata)
     return {
-      // Informations de vol
-      flight_iata: formData.flightNumber,
-      flight_icao: formData.flightNumber.replace(/\s/g, ''), // Simplification
-      operator_iata: operatorIata,
-
-      // Aéroports
-      dep_airport_iata: formData.origin.toUpperCase(),
-      arr_airport_iata: formData.destination.toUpperCase(),
-
-      // Route et timing
-      route_distance_km: parseInt(formData.distance) || 0,
-      flight_duration_minutes: Math.floor((parseInt(formData.distance) || 0) / 10), // Estimation: ~600km/h
-      scheduled_dep_hour: hour,
-      scheduled_dep_dayofweek: dayOfWeek,
-      scheduled_dep_month: month,
-
-      // Heures de pointe
-      is_morning_rush: hour >= 6 && hour <= 9,
-      is_evening_rush: hour >= 17 && hour <= 20,
-      is_weekend: dayOfWeek === 0 || dayOfWeek === 6,
-
-      // Informations vol
-      is_international: true, // Supposé international
-      is_codeshare: false,
-
-      // Météo départ (basée sur les conditions sélectionnées)
-      dep_cloud_cover: weather.cloudCover,
-      dep_precipitation: weather.precipitation,
-      dep_temperature: weather.temperature,
-      dep_visibility: weather.visibility,
-      dep_wind_speed: weather.adverseWeather ? 20 : 10,
-      dep_wind_gusts: weather.adverseWeather ? 30 : 15,
-      dep_adverse_weather: weather.adverseWeather,
-
-      // Météo arrivée (supposée similaire mais légèrement meilleure)
-      arr_cloud_cover: Math.max(0, weather.cloudCover - 10),
-      arr_precipitation: Math.max(0, weather.precipitation - 2),
-      arr_temperature: weather.temperature + 3,
-      arr_visibility: Math.min(10000, weather.visibility + 1000),
-      arr_wind_speed: weather.adverseWeather ? 15 : 8,
-      arr_wind_gusts: weather.adverseWeather ? 22 : 12,
-      arr_adverse_weather: false,
-
-      // Caractéristiques aéroports (valeurs par défaut raisonnables)
-      dep_elevation_ft: 400,
-      dep_runway_count: 4,
-      arr_elevation_ft: 13,
-      arr_runway_count: 4,
-
-      // Statistiques de retard (valeurs par défaut - idéalement à récupérer d'autres endpoints)
-      airline_avg_delay_7d: 20,
-      route_avg_delay_7d: 25,
-      dep_airport_avg_delay_7d: 22,
-      arr_airport_avg_delay_7d: 18,
+      flight_iata: formData.flightNumber
     }
   }
 
