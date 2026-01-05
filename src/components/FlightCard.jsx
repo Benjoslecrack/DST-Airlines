@@ -45,20 +45,9 @@ function FlightCard({ flight }) {
           <div className="location-code">
             {isOldFormat ? flight.origin.code : flight.origin}
           </div>
-          <div className="location-name">
+          {/* <div className="location-name">
             {isOldFormat ? flight.origin.city : (flight.aircraftModel || t('common.notAvailable'))}
-          </div>
-        </div>
-
-        <div className="flight-arrow">→</div>
-
-        <div className="flight-location">
-          <div className="location-code">
-            {isOldFormat ? flight.destination.code : (flight.destination || t('common.notAvailable'))}
-          </div>
-          <div className="location-name">
-            {isOldFormat ? flight.destination.city : t('common.notAvailable')}
-          </div>
+          </div> */}
         </div>
       </div>
 
