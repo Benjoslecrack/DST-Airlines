@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { enrichmentService } from '../services'
+import { enrichmentService, statesService } from '../services'
 
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -12,15 +12,35 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 })
 
-const planeIcon = new L.Icon({
+// Function to create a rotated plane icon with color based on flight status
+const createPlaneIcon = (rotation = 0, isOnGround = false) => {
+  const color = isOnGround ? '#666666' : '#2196F3' // Gray for grounded, blue for flying
+  return new L.DivIcon({
+    html: `
+      <div style="transform: rotate(${rotation}deg); width: 32px; height: 32px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+          <path d="M17.8 11.2 16 7l3.5-3.5c1.5-1.5 2-3.5 1.5-4.5-1-.5-3 0-4.5 1.5L13 4 4.8 2.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 8l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" fill="${color}" transform="translate(0, 2)"/>
+        </svg>
+      </div>
+    `,
+    className: 'plane-icon',
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16],
+  })
+}
+
+// Airport icon
+const airportIcon = new L.Icon({
   iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
-      <path d="M17.8 11.2 16 7l3.5-3.5c1.5-1.5 2-3.5 1.5-4.5-1-.5-3 0-4.5 1.5L13 4 4.8 2.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 8l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" fill="black" transform="translate(0, 2)"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28">
+      <circle cx="12" cy="12" r="10" fill="#FF5722" opacity="0.8"/>
+      <path d="M12 4L14 10L20 12L14 14L12 20L10 14L4 12L10 10Z" fill="white"/>
     </svg>
   `),
-  iconSize: [32, 32],
-  iconAnchor: [16, 16],
-  popupAnchor: [0, -16],
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+  popupAnchor: [0, -14],
 })
 
 function LiveFlights() {
@@ -28,6 +48,8 @@ function LiveFlights() {
   const [flights, setFlights] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedFlight, setSelectedFlight] = useState(null)
+  const [flightTrack, setFlightTrack] = useState([])
+  const [airports, setAirports] = useState({ departure: null, arrival: null })
   const [filter, setFilter] = useState('all')
   const [error, setError] = useState(null)
 
@@ -46,6 +68,42 @@ function LiveFlights() {
       console.error('Error fetching flights:', err)
       setError(err.message)
       setLoading(false)
+    }
+  }
+
+  const fetchFlightTrack = async (callsign) => {
+    try {
+      const trackData = await statesService.getFlightTrack(callsign)
+
+      if (trackData && trackData.length > 0) {
+        setFlightTrack(trackData)
+
+        // Extract airport information from the first and last point
+        const firstPoint = trackData[0]
+        const lastPoint = trackData[trackData.length - 1]
+
+        setAirports({
+          departure: firstPoint.dep_name ? {
+            name: firstPoint.dep_name,
+            position: [firstPoint.latitude, firstPoint.longitude]
+          } : null,
+          arrival: lastPoint.arr_name ? {
+            name: lastPoint.arr_name,
+            position: [lastPoint.latitude, lastPoint.longitude]
+          } : null
+        })
+      }
+    } catch (err) {
+      console.error('Error fetching flight track:', err)
+      setFlightTrack([])
+      setAirports({ departure: null, arrival: null })
+    }
+  }
+
+  const handleFlightClick = (flight) => {
+    setSelectedFlight(flight)
+    if (flight.callsign) {
+      fetchFlightTrack(flight.callsign)
     }
   }
 
@@ -163,17 +221,19 @@ function LiveFlights() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
+          {/* Flight markers with rotation */}
           {filteredFlights.map(flight => {
-            // Use real position from API
             const currentPosition = [flight.latitude, flight.longitude]
+            const rotation = flight.heading || 0
+            const isOnGround = flight.onGround || flight.status === 'On Ground'
 
             return (
               <Marker
                 key={flight.id}
                 position={currentPosition}
-                icon={planeIcon}
+                icon={createPlaneIcon(rotation, isOnGround)}
                 eventHandlers={{
-                  click: () => setSelectedFlight(flight)
+                  click: () => handleFlightClick(flight)
                 }}
               >
                 <Popup>
@@ -198,6 +258,46 @@ function LiveFlights() {
               </Marker>
             )
           })}
+
+          {/* Airport markers */}
+          {airports.departure && (
+            <Marker
+              position={airports.departure.position}
+              icon={airportIcon}
+            >
+              <Popup>
+                <div className="airport-popup">
+                  <h3>🛫 {t('liveFlights.departure', 'Départ')}</h3>
+                  <p><strong>{airports.departure.name}</strong></p>
+                </div>
+              </Popup>
+            </Marker>
+          )}
+
+          {airports.arrival && (
+            <Marker
+              position={airports.arrival.position}
+              icon={airportIcon}
+            >
+              <Popup>
+                <div className="airport-popup">
+                  <h3>🛬 {t('liveFlights.arrival', 'Arrivée')}</h3>
+                  <p><strong>{airports.arrival.name}</strong></p>
+                </div>
+              </Popup>
+            </Marker>
+          )}
+
+          {/* Flight track polyline */}
+          {flightTrack.length > 0 && (
+            <Polyline
+              positions={flightTrack.map(point => [point.latitude, point.longitude])}
+              color="#FF5722"
+              weight={3}
+              opacity={0.7}
+              dashArray="10, 10"
+            />
+          )}
         </MapContainer>
       </div>
 
@@ -208,7 +308,11 @@ function LiveFlights() {
             <h3>Détails du vol {selectedFlight.flightNumber}</h3>
             <button
               className="close-btn"
-              onClick={() => setSelectedFlight(null)}
+              onClick={() => {
+                setSelectedFlight(null)
+                setFlightTrack([])
+                setAirports({ departure: null, arrival: null })
+              }}
             >
               ✕
             </button>
@@ -310,7 +414,7 @@ function LiveFlights() {
               <div
                 key={flight.id}
                 className="flight-compact-card"
-                onClick={() => setSelectedFlight(flight)}
+                onClick={() => handleFlightClick(flight)}
               >
                 <div className="compact-flight-number">{flight.flightNumber}</div>
                 <div className="compact-route">

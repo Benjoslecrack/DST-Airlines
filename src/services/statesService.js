@@ -66,6 +66,18 @@ export const statesService = {
   },
 
   /**
+   * Get flight track of an aircraft based on its callsign
+   * @param {string} callsign - Flight callsign (3-10 characters)
+   * @returns {Promise<Array>} Flight track data with airport information
+   */
+  async getFlightTrack(callsign) {
+    if (!callsign || callsign.length < 3 || callsign.length > 10) {
+      throw new Error('Callsign must be between 3 and 10 characters');
+    }
+    return await apiClient.get('/states/track/', { callsign });
+  },
+
+  /**
    * Transform API state data to internal flight format
    * @param {Object} state - Raw state data from API
    * @returns {Object} Transformed flight data
