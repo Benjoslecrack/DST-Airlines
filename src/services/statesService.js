@@ -66,6 +66,16 @@ export const statesService = {
   },
 
   /**
+   * Get flight track of an aircraft based on its callsign
+   * @param {string} callsign - Flight callsign
+   * @returns {Promise<Array>} Flight track data (historical positions)
+   */
+  async getFlightTrack(callsign) {
+    const params = { callsign };
+    return await apiClient.get('/states/track/', params);
+  },
+
+  /**
    * Transform API state data to internal flight format
    * @param {Object} state - Raw state data from API
    * @returns {Object} Transformed flight data
