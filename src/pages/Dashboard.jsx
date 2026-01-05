@@ -207,130 +207,131 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Filtres */}
-      <div className="dashboard-filters">
-        <div className="filters-header">
-          <h3>🔍 {t('dashboard.filters', 'Filtres')}</h3>
-          {hasActiveFilters && (
-            <button className="clear-filters-btn" onClick={clearFilters}>
-              {t('dashboard.clearFilters', 'Effacer les filtres')}
-            </button>
-          )}
-        </div>
-
-        <div className="filters-grid">
-          <div className="filter-group">
-            <label className="filter-label">{t('dashboard.search')}</label>
-            <div className="search-wrapper">
-              <span className="search-icon">🔎</span>
-              <input
-                type="text"
-                className="search-input"
-                placeholder={t('dashboard.searchPlaceholder')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="filter-group">
-            <label className="filter-label">{t('dashboard.airline')}</label>
-            <select
-              className="filter-select"
-              value={selectedAirline}
-              onChange={(e) => setSelectedAirline(e.target.value)}
-            >
-              <option value="">{t('dashboard.allAirlines')}</option>
-              {uniqueAirlines.map(airline => (
-                <option key={airline} value={airline}>{airline}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label className="filter-label">{t('dashboard.status')}</label>
-            <select
-              className="filter-select"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-            >
-              <option value="">{t('dashboard.allStatus')}</option>
-              {uniqueStatuses.map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label className="filter-label">{t('dashboard.country')}</label>
-            <select
-              className="filter-select"
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-            >
-              <option value="">{t('dashboard.allCountries')}</option>
-              {uniqueCountries.map(country => (
-                <option key={country} value={country}>{country}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {hasActiveFilters && (
-          <div className="active-filters">
-            {searchTerm && (
-              <div className="filter-tag">
-                {t('dashboard.search')}: "{searchTerm}"
-                <button
-                  className="filter-tag-remove"
-                  onClick={() => setSearchTerm('')}
-                >
-                  ×
-                </button>
-              </div>
-            )}
-            {selectedAirline && (
-              <div className="filter-tag">
-                {t('dashboard.airline')}: {selectedAirline}
-                <button
-                  className="filter-tag-remove"
-                  onClick={() => setSelectedAirline('')}
-                >
-                  ×
-                </button>
-              </div>
-            )}
-            {selectedStatus && (
-              <div className="filter-tag">
-                {t('dashboard.status')}: {selectedStatus}
-                <button
-                  className="filter-tag-remove"
-                  onClick={() => setSelectedStatus('')}
-                >
-                  ×
-                </button>
-              </div>
-            )}
-            {selectedCountry && (
-              <div className="filter-tag">
-                {t('dashboard.country')}: {selectedCountry}
-                <button
-                  className="filter-tag-remove"
-                  onClick={() => setSelectedCountry('')}
-                >
-                  ×
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
       {/* Liste des vols filtrés */}
       <div className="dashboard-section">
         <h2>
           {t('dashboard.flights', 'Vols')} {hasActiveFilters && `(${filteredFlights.length}/${flights.length})`}
         </h2>
+
+        {/* Filtres */}
+        <div className="dashboard-filters">
+          <div className="filters-header">
+            <h3>🔍 {t('dashboard.filters', 'Filtres')}</h3>
+            {hasActiveFilters && (
+              <button className="clear-filters-btn" onClick={clearFilters}>
+                {t('dashboard.clearFilters', 'Effacer les filtres')}
+              </button>
+            )}
+          </div>
+
+          <div className="filters-grid">
+            <div className="filter-group">
+              <label className="filter-label">{t('dashboard.search')}</label>
+              <div className="search-wrapper">
+                <span className="search-icon">🔎</span>
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder={t('dashboard.searchPlaceholder')}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="filter-group">
+              <label className="filter-label">{t('dashboard.airline')}</label>
+              <select
+                className="filter-select"
+                value={selectedAirline}
+                onChange={(e) => setSelectedAirline(e.target.value)}
+              >
+                <option value="">{t('dashboard.allAirlines')}</option>
+                {uniqueAirlines.map(airline => (
+                  <option key={airline} value={airline}>{airline}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label className="filter-label">{t('dashboard.status')}</label>
+              <select
+                className="filter-select"
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+              >
+                <option value="">{t('dashboard.allStatus')}</option>
+                {uniqueStatuses.map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label className="filter-label">{t('dashboard.country')}</label>
+              <select
+                className="filter-select"
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.target.value)}
+              >
+                <option value="">{t('dashboard.allCountries')}</option>
+                {uniqueCountries.map(country => (
+                  <option key={country} value={country}>{country}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {hasActiveFilters && (
+            <div className="active-filters">
+              {searchTerm && (
+                <div className="filter-tag">
+                  {t('dashboard.search')}: "{searchTerm}"
+                  <button
+                    className="filter-tag-remove"
+                    onClick={() => setSearchTerm('')}
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+              {selectedAirline && (
+                <div className="filter-tag">
+                  {t('dashboard.airline')}: {selectedAirline}
+                  <button
+                    className="filter-tag-remove"
+                    onClick={() => setSelectedAirline('')}
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+              {selectedStatus && (
+                <div className="filter-tag">
+                  {t('dashboard.status')}: {selectedStatus}
+                  <button
+                    className="filter-tag-remove"
+                    onClick={() => setSelectedStatus('')}
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+              {selectedCountry && (
+                <div className="filter-tag">
+                  {t('dashboard.country')}: {selectedCountry}
+                  <button
+                    className="filter-tag-remove"
+                    onClick={() => setSelectedCountry('')}
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="flights-grid">
           {filteredFlights.length > 0 ? (
             filteredFlights.slice(0, 10).map(flight => (
