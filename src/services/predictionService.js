@@ -1,7 +1,7 @@
 // Service pour l'API de prédictions de retard
 // En développement, utilise le proxy Vite configuré dans vite.config.js
 // En production, l'URL sera gérée par la configuration Docker/Nginx
-const PREDICTION_API_BASE_URL = '/api/predictions';
+const PREDICTION_API_BASE_URL = '/api';
 
 class PredictionApiClient {
   constructor() {
